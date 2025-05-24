@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tradersharing</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="header">
+    <div class="logo">Tradersharing</div>
+    <div class="notif-icon" id="notif-icon">🔔</div>
+  </div>
+
+  <div class="controls">
+    <label for="pair">Pair:</label>
+    <select id="pair"></select>
+
+    <label for="timeframe">Timeframe:</label>
+    <select id="timeframe"></select>
+
+    <label for="indikator1">Indikator 1:</label>
+    <select id="indikator1"></select>
+
+    <label for="indikator2">Indikator 2:</label>
+    <select id="indikator2"></select>
+
+    <label for="indikator3">Indikator 3:</label>
+    <select id="indikator3"></select>
+  </div>
+
+  <div class="pair-box">Pasangan Mata Uang = <span id="selected-pair">GBP/USD</span></div>
+
+  <div class="box anomali-box">
+    <h2 class="box-title">Anomali Price Action</h2>
+    <div id="anomali-data">Memuat data anomali...</div>
+    <div id="teknikal-data">Memuat data teknikal...</div>
+  </div>
+
+  <div class="box news-box">
+    <h2 class="box-title">News Terkini</h2>
+    <ul id="news-list">Memuat news...</ul>
+  </div>
+
+  <div id="popup-notif" class="popup-notif hidden">Notifikasi</div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="firebase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
