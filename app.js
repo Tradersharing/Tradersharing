@@ -1,0 +1,1 @@
+// Placeholder app.js. Silakan isi dengan versi yang kamu salin sebelumnya.
