@@ -3,106 +3,97 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tradersharing</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Tradersharing - Anomali Price Action</title>
   <style>
-    .center-title {
-      text-align: center;
-      font-weight: bold;
-      color: #1e3a8a;
-      margin-bottom: 1rem;
-      text-transform: uppercase;
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
     }
-    .anomaly-output {
-      text-align: center;
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
+    header {
+      background: #0d47a1;
+      color: white;
+      padding: 10px 15px;
+      font-size: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .anomaly-output span.label {
-      font-weight: bold;
+    .section {
+      background: white;
+      margin: 10px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
-    .anomaly-output span.buy {
-      color: green;
-      font-weight: bold;
+    .section h2 {
+      margin-top: 0;
+      font-size: 18px;
     }
-    .anomaly-output span.sell {
-      color: red;
-      font-weight: bold;
-    }
-    .news-list {
-      padding-left: 1.5rem;
-    }
-    .news-list li {
-      margin-bottom: 0.4rem;
-    }
-    .notif-icon {
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-    .pair-display {
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-    }
-    .vertical-controls label, .vertical-controls select {
-      display: block;
-      margin-bottom: 0.5rem;
-      width: 100%;
-    }
-    .hasil-teknikal {
-      text-align: center;
-      margin-top: 1rem;
-      font-weight: bold;
-      color: #1e3a8a;
+    .dropdown {
+      margin: 10px;
     }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="logo">Tradersharing</div>
-    <div class="notif-icon" id="notif-icon" title="Notifikasi">🔔</div>
+  <header>
+    <span>Tradersharing</span>
+    <span style="font-size: 20px;">🔔</span>
   </header>
 
-  <div class="pair-display">
-    <label for="pair"><strong>Pilih Pair:</strong></label>
-    <select id="pair"></select>
-    <span id="selected-pair">GBP/USD</span>
+  <div class="dropdown">
+    Pasangan Mata Uang:
+    <select>
+      <option>GBP/USD</option>
+      <option>EUR/USD</option>
+      <option>USD/JPY</option>
+      <option>XAU/USD</option>
+      <!-- Tambahkan pair lainnya -->
+    </select>
   </div>
 
-  <div class="box anomali-box">
-    <div class="center-title">Anomali Price Action</div>
-    <div class="anomaly-output"><span class="label">PAIR:</span> <span id="pair-label">-</span></div>
-    <div class="anomaly-output"><span class="label">Anomali:</span> <span id="anomali-value" class="buy">-</span></div>
-    <div class="anomaly-output"><span class="label">Tujuan:</span> <span id="tujuan-value" class="buy">-</span></div>
+  <div class="section" id="anomali-box">
+    <h2>Anomali Price Action</h2>
+    <div id="anomali-content">Memuat data anomali...</div>
   </div>
 
-  <div class="box news-box">
-    <div class="center-title">Berita Terkait</div>
-    <ul id="news-list" class="news-list">
+  <div class="section" id="news-box">
+    <h2>News Hari Ini</h2>
+    <ul id="news-list">
       <li>Memuat berita...</li>
     </ul>
   </div>
 
-  <div class="box teknikal-box">
-    <div class="center-title">Teknikal Price Action</div>
-    <div class="controls vertical-controls">
-      <label for="timeframe">Timeframe:</label>
-      <select id="timeframe"></select>
-
-      <label for="indikator1">Indikator 1:</label>
-      <select id="indikator1"></select>
-
-      <label for="indikator2">Indikator 2:</label>
-      <select id="indikator2"></select>
-
-      <label for="indikator3">Indikator 3:</label>
-      <select id="indikator3"></select>
-    </div>
-    <div id="teknikal-data" class="hasil-teknikal">Pilih indikator untuk melihat sinyal teknikal</div>
+  <div class="section" id="teknikal-box">
+    <h2>Teknikal Price Action</h2>
+    <label>Pilih Indikator:</label><br />
+    <select id="indikator-1"><option>RSI</option></select>
+    <select id="indikator-2"><option>MACD</option></select>
+    <select id="indikator-3"><option>MA</option></select>
+    <div id="teknikal-output">Sinyal belum dihitung.</div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <script src="firebase.js"></script>
-  <script src="app.js"></script>
+  <!-- Firebase Modular SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
+    // Tambahkan import lainnya jika perlu (misal getDatabase dsb)
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCn-MxZ96eujNalUlZaRs4Id6-9np3ffQk",
+      authDomain: "anomali-price-action.firebaseapp.com",
+      projectId: "anomali-price-action",
+      storageBucket: "anomali-price-action.firebasestorage.app",
+      messagingSenderId: "138775853204",
+      appId: "1:138775853204:web:44b073675490213c7d9c81",
+      measurementId: "G-PP58JN04W8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    // Kamu bisa tambahkan database / firestore di bawah ini
+  </script>
 </body>
 </html>
