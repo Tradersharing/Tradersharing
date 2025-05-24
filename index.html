@@ -12,11 +12,26 @@
     <div class="notif-icon" id="notif-icon"></div>
   </header>
 
-  <div class="pair-box">Pasangan Mata Uang = <span id="selected-pair">GBP/USD</span></div>
+  <div class="pair-display">Pair: <span id="selected-pair">GBP/USD</span></div>
+
+  <div class="box anomali-box">
+    <h2 class="box-title">Anomali Price Action</h2>
+    <ul id="anomali-data" class="styled-list">
+      <li>Memuat data anomali...</li>
+      <li>Memuat data tujuan...</li>
+    </ul>
+  </div>
+
+  <div class="box news-box center-box">
+    <h2 class="box-title">News Terkini</h2>
+    <ul id="news-list" class="styled-list">
+      <li>Memuat news...</li>
+    </ul>
+  </div>
 
   <div class="box teknikal-box">
     <h2 class="box-title">Teknikal Price Action</h2>
-    <div class="controls">
+    <div class="controls vertical-controls">
       <label for="pair">Pair:</label>
       <select id="pair"></select>
 
@@ -32,20 +47,10 @@
       <label for="indikator3">Indikator 3:</label>
       <select id="indikator3"></select>
     </div>
-    <div id="teknikal-data" class="content-line">Pilih indikator teknikal</div>
+    <div id="teknikal-data" class="hasil-teknikal">Hasil teknikal akan muncul di sini</div>
   </div>
 
-  <div class="box anomali-box">
-    <h2 class="box-title">Anomali Price Action</h2>
-    <div id="anomali-data" class="content-line">Memuat data anomali...</div>
-  </div>
-
-  <div class="box news-box">
-    <h2 class="box-title">News Terkini</h2>
-    <ul id="news-list">Memuat news...</ul>
-  </div>
-
-  <div id="popup-notif" class="popup-notif hidden">Notifikasi</div>
+  <div id="popup-notif" class="popup-notif hidden"></div>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
