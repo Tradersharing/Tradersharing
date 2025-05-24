@@ -11,7 +11,6 @@ const indikatorMT4 = [
 "Parabolic SAR","Ichimoku Kinko Hyo","Envelopes","DeMarker"
 ];
 
-// Element DOM
 const pairSelect = document.getElementById("pair");
 const timeframeSelect = document.getElementById("timeframe");
 const indikator1Select = document.getElementById("indikator1");
@@ -35,7 +34,6 @@ function populateSelect(selectElem, options, defaultVal = null) {
   if (defaultVal) selectElem.value = defaultVal;
 }
 
-// Simulasi data dummy
 function fetchData(pair, timeframe, indikatorArr) {
   return new Promise(resolve => {
     setTimeout(() => {
