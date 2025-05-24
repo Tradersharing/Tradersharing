@@ -1,11 +1,10 @@
-
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "API_KEY_MU",
-  authDomain: "PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://PROJECT_ID-default-rtdb.firebaseio.com",
-  projectId: "PROJECT_ID",
-  storageBucket: "PROJECT_ID.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID",
+  apiKey: "AIzaSyCn-MxZ96eujNalUlZaRs4Id6-9np3ffQk",
+  authDomain: "anomali-price-action.firebaseapp.com",
+  projectId: "anomali-price-action",
+  storageBucket: "anomali-price-action.firebasestorage.app",
+  messagingSenderId: "138775853204",
+  appId: "1:138775853204:web:44b073675490213c7d9c81",
+  measurementId: "G-PP58JN04W8"
 };
-firebase.initializeApp(firebaseConfig);
