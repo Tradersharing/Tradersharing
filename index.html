@@ -23,16 +23,26 @@
     .section {
       background: white;
       margin: 10px;
-      padding: 10px 15px;
+      padding: 15px;
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     .section h2 {
       margin-top: 0;
       font-size: 18px;
+      color: #0d47a1;
     }
     .dropdown {
+      background: white;
       margin: 10px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    #teknikal-output {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #333;
     }
   </style>
 </head>
@@ -71,49 +81,26 @@
     <select id="indikator-1"><option>RSI</option></select>
     <select id="indikator-2"><option>MACD</option></select>
     <select id="indikator-3"><option>MA</option></select>
-    <div id="teknikal-output">Sinyal belum dihitung.</div>
+    <div id="teknikal-output">
+      Buy: 65% <span style="color:orange">Sedang</span><br>
+      Sell: 35% <span style="color:green">Lemah</span>
+    </div>
   </div>
 
-  <!-- Firebase Modular SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
-    // Tambahkan import lainnya jika perlu (misal getDatabase dsb)
-
+  <!-- Firebase CDN (Compat mode, non-module) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCn-MxZ96eujNalUlZaRs4Id6-9np3ffQk",
       authDomain: "anomali-price-action.firebaseapp.com",
       projectId: "anomali-price-action",
-      storageBucket: "anomali-price-action.firebasestorage.app",
+      storageBucket: "anomali-price-action.appspot.com",
       messagingSenderId: "138775853204",
       appId: "1:138775853204:web:44b073675490213c7d9c81",
       measurementId: "G-PP58JN04W8"
     };
-
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-
-    // Kamu bisa tambahkan database / firestore di bawah ini
-
+    firebase.initializeApp(firebaseConfig);
   </script>
-<!-- Firebase Init -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-analytics.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCn-MxZ96eujNalUlZaRs4Id6-9np3ffQk",
-    authDomain: "anomali-price-action.firebaseapp.com",
-    projectId: "anomali-price-action",
-    storageBucket: "anomali-price-action.firebasestorage.app",
-    messagingSenderId: "138775853204",
-    appId: "1:138775853204:web:44b073675490213c7d9c81",
-    measurementId: "G-PP58JN04W8"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-
 </body>
 </html>
