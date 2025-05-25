@@ -1,128 +1,88 @@
-// ===== app.js Versi Final dengan Support GNews API =====
-
-// Daftar pair lengkap
+// Data dasar
 const pairs = [
-  "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "USDCAD", "AUDUSD", "NZDUSD",
-  "EURJPY", "EURGBP", "EURAUD", "EURCHF", "EURCAD", "EURNZD", "GBPJPY",
-  "GBPCHF", "AUDJPY", "CHFJPY", "CADJPY", "AUDCAD", "AUDCHF", "AUDNZD",
-  "CADCHF", "NZDJPY", "NZDCAD", "XAUUSD"
+  "EURUSD","USDJPY","GBPUSD","USDCHF","USDCAD","AUDUSD","NZDUSD",
+  "EURJPY","EURGBP","EURAUD","EURCHF","EURCAD","EURNZD","GBPJPY",
+  "GBPCHF","AUDJPY","CHFJPY","CADJPY","AUDCAD","AUDCHF","AUDNZD",
+  "CADCHF","NZDJPY","NZDCAD","XAUUSD"
 ];
 
-const timeframes = ["M1", "M5", "M15", "M30", "H1", "H4", "D1", "W1", "MN"];
+const timeframes = ["M1","M5","M15","M30","H1","H4","D1","W1","MN"];
 
 const indikatorMT4 = [
-  "Moving Average", "MACD", "RSI", "Bollinger Bands", "Stochastic",
-  "ADX", "CCI", "ATR", "Momentum", "Williams %R",
-  "Parabolic SAR", "Ichimoku Kinko Hyo", "Envelopes", "DeMarker"
+  "Moving Average","MACD","RSI","Bollinger Bands","Stochastic",
+  "ADX","CCI","ATR","Momentum","Williams %R",
+  "Parabolic SAR","Ichimoku Kinko Hyo","Envelopes","DeMarker"
 ];
 
+// Elemen DOM
 const pairSelect = document.getElementById("pair");
 const timeframeSelect = document.getElementById("timeframe");
 const indikator1Select = document.getElementById("indikator1");
 const indikator2Select = document.getElementById("indikator2");
 const indikator3Select = document.getElementById("indikator3");
 
-const teknikalDataDiv = document.getElementById("teknikal-data");
 const newsListUl = document.getElementById("news-list");
 const popupNotifDiv = document.getElementById("popup-notif");
 
-function populateSelect(selectElem, options, defaultVal = null) {
+// API Key GNews kamu di sini
+const GNEWS_API_KEY = "7M31UV6P749OUDDE";
+
+// Fungsi isi select box
+function populateSelect(selectElem, options, defaultVal=null) {
   selectElem.innerHTML = "";
   options.forEach(opt => {
     const el = document.createElement("option");
-    el.value = opt;
-    el.textContent = opt;
+    el.value = opt.includes("/") ? opt : `${opt.slice(0,3)}/${opt.slice(3,6)}`;
+    el.textContent = opt.includes("/") ? opt : `${opt.slice(0,3)}/${opt.slice(3,6)}`;
     selectElem.appendChild(el);
   });
   if (defaultVal) selectElem.value = defaultVal;
 }
 
+// Popup notif sederhana
 function showPopupNotif(message) {
   popupNotifDiv.textContent = message;
   popupNotifDiv.classList.remove("hidden");
   setTimeout(() => popupNotifDiv.classList.add("hidden"), 4000);
 }
 
-function fetchRealtimeData(pair, timeframe, indikatorArr) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        anomali: `Anomali pada ${pair} di TF ${timeframe}: Buy 65%, Sell 35%`,
-        tujuan: `Target TP 40 pips`,
-        teknikal: indikatorArr.length === 0 ?
-          "Pilih indikator untuk lihat sinyal teknikal" :
-          `Sinyal teknikal gabungan (${indikatorArr.join(", ")}): Buy 70%, Sell 30%`
-      });
-    }, 1000);
-  });
-}
+// Fetch berita dari GNews API, pakai proxy CORS supaya bisa jalan di GitHub Pages
+async function fetchNews(query) {
+  const proxy = "https://corsproxy.io/?";
+  const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=id&max=5&apikey=${GNEWS_API_KEY}`;
 
-function fetchForexNews() {
-  const apiKey = "7M31UV6P749OUDDE"; // GNews API key
-  const query = "forex OR currency OR EURUSD OR USDJPY";
-  const gnewsUrl = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&country=us&max=5&apikey=${apiKey}`;
-  const proxyUrl = "https://corsproxy.io/?";
+  try {
+    const res = await fetch(proxy + url);
+    if (!res.ok) throw new Error("Gagal fetch news");
+    const data = await res.json();
 
-  fetch(proxyUrl + gnewsUrl)
-    .then(response => response.json())
-    .then(data => {
-      newsListUl.innerHTML = "";
-      if (!data.articles || data.articles.length === 0) {
-        newsListUl.innerHTML = "<li>Tidak ada berita tersedia saat ini.</li>";
-      } else {
-        data.articles.forEach(article => {
-          const li = document.createElement("li");
-          li.innerHTML = `<a href="${article.url}" target="_blank">${article.title}</a>`;
-          newsListUl.appendChild(li);
-        });
-      }
-    })
-    .catch(error => {
-      console.error("Gagal memuat berita:", error);
-      newsListUl.innerHTML = "<li>Gagal memuat berita.</li>";
+    if (!data.articles || data.articles.length === 0) {
+      newsListUl.innerHTML = "<li>Tidak ada berita terbaru.</li>";
+      return;
+    }
+
+    newsListUl.innerHTML = "";
+    data.articles.forEach(article => {
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="${article.url}" target="_blank" rel="noopener noreferrer">${article.title}</a> <br> <small>${new Date(article.publishedAt).toLocaleString()}</small>`;
+      newsListUl.appendChild(li);
     });
+  } catch (e) {
+    newsListUl.innerHTML = "<li>Gagal memuat berita.</li>";
+    console.error("Error fetchNews:", e);
+  }
 }
 
+// Dummy fungsi updateData buat bagian anomali & teknikal, fokus di news
 function updateData() {
-  const pair = pairSelect.value;
-  const timeframe = timeframeSelect.value;
-  const indikatorArr = [indikator1Select.value, indikator2Select.value, indikator3Select.value].filter(i => i);
-
-  document.getElementById("pair-label")?.textContent = pair;
-  document.getElementById("anomali-value")?.textContent = "Memuat...";
-  document.getElementById("tujuan-value")?.textContent = "Memuat...";
-  teknikalDataDiv.textContent = "Memuat data...";
-  document.getElementById("anomali-sumber")?.innerHTML = "";
-
-  fetchRealtimeData(pair, timeframe, indikatorArr)
-    .then(data => {
-      let isBuy = data.anomali.includes("Buy");
-
-      document.getElementById("anomali-value").textContent = isBuy ? "Buy" : "Sell";
-      document.getElementById("tujuan-value").textContent = isBuy ? "Buy" : "Sell";
-
-      teknikalDataDiv.innerHTML = `
-        Buy % = ${["lemah", "sedang", "netral", "kuat"][Math.floor(Math.random() * 4)]}<br>
-        Sell % = ${["lemah", "sedang", "netral", "kuat"][Math.floor(Math.random() * 4)]}
-      `;
-
-      const sumber = [
-        "• myfxbook buy 70% sell 30%",
-        "• fxblue buy 65% sell 35%",
-        "• tradingview buy 60% sell 40%"
-      ];
-      sumber.forEach(text => {
-        const li = document.createElement("li");
-        li.textContent = text;
-        document.getElementById("anomali-sumber")?.appendChild(li);
-      });
-    });
-
-  fetchForexNews();
+  const pair = pairSelect.value.replace("/", "");
+  // Update news sesuai pair (misal cari berita EURUSD jadi "EURUSD" keyword)
+  fetchNews(pair);
 }
 
+// Event listener dan inisialisasi
 window.addEventListener("DOMContentLoaded", () => {
-  populateSelect(pairSelect, pairs.map(p => p.includes("/") ? p : `${p.slice(0, 3)}/${p.slice(3, 6)}`), "EUR/USD");
+  populateSelect(pairSelect, pairs, "EURUSD");
   populateSelect(timeframeSelect, timeframes, "H1");
   populateSelect(indikator1Select, indikatorMT4);
   populateSelect(indikator2Select, indikatorMT4);
