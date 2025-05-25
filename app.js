@@ -145,6 +145,9 @@ function updateData() {
         newsListUl.appendChild(li);
       });
 
+const api = "https://financialmodelingprep.com/api/v3/fx_calendar?apikey=G5P1iNxCJ5OQ68rUuNgqXytiGeb3LXD0";
+
+      
       const sumber = [
         "• myfxbooz buy 70% sell 30%",
         "• fxblue buy 65% sell 35%",
