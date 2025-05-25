@@ -68,6 +68,7 @@ function updateData() {
   newsListUl.innerHTML = "";
   document.getElementById("anomali-sumber").innerHTML = "";
 
+  // Update data anomali dan teknikal
   fetchRealtimeData(pair, timeframe, indikatorArr)
     .then(data => {
       let isBuy = data.anomali.includes("Buy");
@@ -92,6 +93,7 @@ function updateData() {
       });
     });
 
+  // === BAGIAN NEWS REVISI MULAI DI SINI ===
   const proxy = "https://corsproxy.io/?";
   const api = "https://financialmodelingprep.com/api/v3/fx_calendar?apikey=G5P1iNxCJ5OQ68rUuNgqXytiGeb3LXD0";
   const [base, quote] = pair.includes("/") ? pair.split("/") : [pair.slice(0, 3), pair.slice(3, 6)];
@@ -99,7 +101,11 @@ function updateData() {
   fetch(proxy + api)
     .then(res => res.json())
     .then(data => {
-      const filtered = data.filter(item =>
+      // Data dari API ada di objek data.calendar (array)
+      const calendar = data.calendar || [];
+
+      // Filter news berdasarkan base atau quote
+      const filtered = calendar.filter(item =>
         item.currency === base || item.currency === quote
       );
 
@@ -117,6 +123,7 @@ function updateData() {
     .catch(() => {
       newsListUl.innerHTML = "<li>Gagal memuat berita.</li>";
     });
+  // === BAGIAN NEWS REVISI SELESAI ===
 }
 
 window.addEventListener("DOMContentLoaded", () => {
