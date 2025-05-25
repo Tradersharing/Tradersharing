@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tradersharing</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <header class="header">
@@ -22,7 +23,7 @@
     <div class="anomaly-output"><span class="label">PAIR:</span> <span id="pair-label">-</span></div>
     <div class="anomaly-output"><span class="label">Anomali:</span> <span id="anomali-value" class="sell">-</span></div>
     <div class="anomaly-output"><span class="label">Tujuan:</span> <span id="tujuan-value" class="sell">-</span></div>
-    <ul class="news-list" id="anomali-sumber"></ul>
+    <ul id="anomali-sumber" class="news-list"></ul>
   </div>
 
   <div class="box news-box center-box">
@@ -39,29 +40,7 @@
       <select id="timeframe"></select>
 
       <label for="indikator1">Indikator 1:</label>
-      <select id="indikator1">
-        <option value="">None</option>
-      </select>
+      <select id="indikator1"><option value="">None</option></select>
 
       <label for="indikator2">Indikator 2:</label>
-      <select id="indikator2">
-        <option value="">None</option>
-      </select>
-
-      <label for="indikator3">Indikator 3:</label>
-      <select id="indikator3">
-        <option value="">None</option>
-      </select>
-    </div>
-    <button onclick="updateData()">Cek Sinyal</button>
-    <div id="teknikal-data" class="hasil-teknikal">Pilih indikator untuk melihat sinyal teknikal</div>
-  </div>
-
-  <div id="popup-notif" class="popup-notif hidden"></div>
-
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <script src="firebase.js"></script>
-  <script src="app.js"></script>
-</body>
-</html>
+      <select id="indikator2"><option value="">None
