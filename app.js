@@ -1,17 +1,19 @@
-// Contoh daftar pair lengkap termasuk XAUUSD
+// ===== app.js Versi Final dengan Support GNews API =====
+
+// Daftar pair lengkap
 const pairs = [
-  "EURUSD","USDJPY","GBPUSD","USDCHF","USDCAD","AUDUSD","NZDUSD",
-  "EURJPY","EURGBP","EURAUD","EURCHF","EURCAD","EURNZD","GBPJPY",
-  "GBPCHF","AUDJPY","CHFJPY","CADJPY","AUDCAD","AUDCHF","AUDNZD",
-  "CADCHF","NZDJPY","NZDCAD","XAUUSD"
+  "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "USDCAD", "AUDUSD", "NZDUSD",
+  "EURJPY", "EURGBP", "EURAUD", "EURCHF", "EURCAD", "EURNZD", "GBPJPY",
+  "GBPCHF", "AUDJPY", "CHFJPY", "CADJPY", "AUDCAD", "AUDCHF", "AUDNZD",
+  "CADCHF", "NZDJPY", "NZDCAD", "XAUUSD"
 ];
 
-const timeframes = ["M1","M5","M15","M30","H1","H4","D1","W1","MN"];
+const timeframes = ["M1", "M5", "M15", "M30", "H1", "H4", "D1", "W1", "MN"];
 
 const indikatorMT4 = [
-  "Moving Average","MACD","RSI","Bollinger Bands","Stochastic",
-  "ADX","CCI","ATR","Momentum","Williams %R",
-  "Parabolic SAR","Ichimoku Kinko Hyo","Envelopes","DeMarker"
+  "Moving Average", "MACD", "RSI", "Bollinger Bands", "Stochastic",
+  "ADX", "CCI", "ATR", "Momentum", "Williams %R",
+  "Parabolic SAR", "Ichimoku Kinko Hyo", "Envelopes", "DeMarker"
 ];
 
 const pairSelect = document.getElementById("pair");
@@ -24,7 +26,7 @@ const teknikalDataDiv = document.getElementById("teknikal-data");
 const newsListUl = document.getElementById("news-list");
 const popupNotifDiv = document.getElementById("popup-notif");
 
-function populateSelect(selectElem, options, defaultVal=null) {
+function populateSelect(selectElem, options, defaultVal = null) {
   selectElem.innerHTML = "";
   options.forEach(opt => {
     const el = document.createElement("option");
@@ -55,29 +57,29 @@ function fetchRealtimeData(pair, timeframe, indikatorArr) {
   });
 }
 
-function fetchNewsGNews(pair) {
-  const apiKey = "7M31UV6P749OUDDE"; // GNews API Key
-  const query = pair.replace("/", "");
-  const url = `https://gnews.io/api/v4/search?q=${query}&lang=en&token=${apiKey}`;
+function fetchForexNews() {
+  const apiKey = "7M31UV6P749OUDDE"; // GNews API key
+  const query = "forex OR currency OR EURUSD OR USDJPY";
+  const gnewsUrl = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&country=us&max=5&apikey=${apiKey}`;
+  const proxyUrl = "https://corsproxy.io/?";
 
-  newsListUl.innerHTML = "<li>Memuat berita...</li>";
-
-  fetch(url)
-    .then(res => res.json())
+  fetch(proxyUrl + gnewsUrl)
+    .then(response => response.json())
     .then(data => {
       newsListUl.innerHTML = "";
       if (!data.articles || data.articles.length === 0) {
-        newsListUl.innerHTML = "<li>Tidak ada berita terkini.</li>";
-        return;
+        newsListUl.innerHTML = "<li>Tidak ada berita tersedia saat ini.</li>";
+      } else {
+        data.articles.forEach(article => {
+          const li = document.createElement("li");
+          li.innerHTML = `<a href="${article.url}" target="_blank">${article.title}</a>`;
+          newsListUl.appendChild(li);
+        });
       }
-      data.articles.slice(0, 5).forEach(article => {
-        const li = document.createElement("li");
-        li.innerHTML = `<a href="${article.url}" target="_blank">${article.title}</a>`;
-        newsListUl.appendChild(li);
-      });
     })
-    .catch(err => {
-      newsListUl.innerHTML = `<li>Gagal memuat berita (${err.message}).</li>`;
+    .catch(error => {
+      console.error("Gagal memuat berita:", error);
+      newsListUl.innerHTML = "<li>Gagal memuat berita.</li>";
     });
 }
 
@@ -86,16 +88,16 @@ function updateData() {
   const timeframe = timeframeSelect.value;
   const indikatorArr = [indikator1Select.value, indikator2Select.value, indikator3Select.value].filter(i => i);
 
-  document.getElementById("pair-label").textContent = pair;
-  document.getElementById("anomali-value").textContent = "Memuat...";
-  document.getElementById("tujuan-value").textContent = "Memuat...";
+  document.getElementById("pair-label")?.textContent = pair;
+  document.getElementById("anomali-value")?.textContent = "Memuat...";
+  document.getElementById("tujuan-value")?.textContent = "Memuat...";
   teknikalDataDiv.textContent = "Memuat data...";
-  newsListUl.innerHTML = "<li>Memuat...</li>";
-  document.getElementById("anomali-sumber").innerHTML = "";
+  document.getElementById("anomali-sumber")?.innerHTML = "";
 
   fetchRealtimeData(pair, timeframe, indikatorArr)
     .then(data => {
-      const isBuy = data.anomali.includes("Buy");
+      let isBuy = data.anomali.includes("Buy");
+
       document.getElementById("anomali-value").textContent = isBuy ? "Buy" : "Sell";
       document.getElementById("tujuan-value").textContent = isBuy ? "Buy" : "Sell";
 
@@ -112,15 +114,15 @@ function updateData() {
       sumber.forEach(text => {
         const li = document.createElement("li");
         li.textContent = text;
-        document.getElementById("anomali-sumber").appendChild(li);
+        document.getElementById("anomali-sumber")?.appendChild(li);
       });
     });
 
-  fetchNewsGNews(pair);
+  fetchForexNews();
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  populateSelect(pairSelect, pairs.map(p => p.includes("/") ? p : `${p.slice(0,3)}/${p.slice(3,6)}`), "EUR/USD");
+  populateSelect(pairSelect, pairs.map(p => p.includes("/") ? p : `${p.slice(0, 3)}/${p.slice(3, 6)}`), "EUR/USD");
   populateSelect(timeframeSelect, timeframes, "H1");
   populateSelect(indikator1Select, indikatorMT4);
   populateSelect(indikator2Select, indikatorMT4);
