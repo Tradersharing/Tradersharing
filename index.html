@@ -9,31 +9,111 @@
 <body>
   <header class="header">
     <div class="logo">Tradersharing</div>
-    <div class="notif-icon" id="notif-icon" title="Notifikasi"></div>
+    <div class="notif-icon" id="notif-icon"></div>
   </header>
 
-  <div class="pair-display">
-    <p>Pasangan Mata Uang = GBP/USD</p>
+  <div class="pair-box">Pasangan Mata Uang =
+    <select id="pair">
+      <option>EUR/USD</option>
+      <option>GBP/USD</option>
+      <option>USD/JPY</option>
+      <option>USD/CHF</option>
+      <option>USD/CAD</option>
+      <option>AUD/USD</option>
+      <option>NZD/USD</option>
+      <option>EUR/GBP</option>
+      <option>EUR/JPY</option>
+      <option>EUR/CHF</option>
+      <option>EUR/CAD</option>
+      <option>EUR/AUD</option>
+      <option>GBP/JPY</option>
+      <option>GBP/CHF</option>
+      <option>GBP/CAD</option>
+      <option>GBP/AUD</option>
+      <option>USD/SGD</option>
+      <option>USD/HKD</option>
+      <option>USD/SEK</option>
+      <option>USD/NOK</option>
+      <option>AUD/JPY</option>
+      <option>NZD/JPY</option>
+      <option>CHF/JPY</option>
+      <option>CAD/JPY</option>
+      <option>XAU/USD</option>
+    </select>
   </div>
 
-  <!-- Box 1: Anomali -->
+  <!-- Kotak Anomali -->
   <div class="box blue-box">
     <div class="title-3d">Anomali Price Action</div>
-    <p>Memuat data anomali…</p>
-    <p>Memuat data tujuan…</p>
+    <div class="content-line">Memuat data anomali...</div>
+    <div class="content-line">Memuat data tujuan...</div>
   </div>
 
-  <!-- Box 2: News -->
+  <!-- Kotak News -->
   <div class="box news-box">
     <div class="title-3d">News Terkini</div>
-    <p>Memuat news…</p>
+    <ul id="news-list">
+      <li>Memuat news...</li>
+    </ul>
   </div>
 
-  <!-- Box 3: Teknikal -->
+  <!-- Kotak Teknikal -->
   <div class="box teknikal-box">
     <div class="title-3d">Teknikal Price Action</div>
-    <p>Pilih indikator teknikal</p>
+    <div class="controls">
+      <label for="timeframe">Timeframe:</label>
+      <select id="timeframe">
+        <option>M1</option>
+        <option>M5</option>
+        <option>M15</option>
+        <option>M30</option>
+        <option>H1</option>
+        <option>H4</option>
+        <option>D1</option>
+        <option>W1</option>
+        <option>MN</option>
+      </select>
+
+      <label for="indikator1">Indikator 1:</label>
+      <select id="indikator1">
+        <option>None</option>
+        <option>Moving Average</option>
+        <option>MACD</option>
+        <option>RSI</option>
+        <option>Stochastic Oscillator</option>
+        <option>CCI</option>
+        <option>ADX</option>
+        <option>Bollinger Bands</option>
+        <option>Ichimoku Kinko Hyo</option>
+        <option>Envelopes</option>
+        <option>ATR</option>
+        <option>Alligator</option>
+        <option>Awesome Oscillator</option>
+        <option>Fractals</option>
+        <option>Gator Oscillator</option>
+        <option>Heiken Ashi</option>
+        <option>Momentum</option>
+        <option>Parabolic SAR</option>
+        <option>Standard Deviation</option>
+        <option>Williams %R</option>
+      </select>
+
+      <label for="indikator2">Indikator 2:</label>
+      <select id="indikator2">
+        <option>None</option>
+        <!-- sama seperti indikator1 -->
+      </select>
+
+      <label for="indikator3">Indikator 3:</label>
+      <select id="indikator3">
+        <option>None</option>
+        <!-- sama seperti indikator1 -->
+      </select>
+    </div>
+    <div class="content-line">Pilih indikator teknikal</div>
   </div>
+
+  <div id="popup-notif" class="popup-notif hidden">Notifikasi</div>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
