@@ -1,17 +1,17 @@
 // Contoh daftar pair lengkap termasuk XAUUSD
 const pairs = [
-  "EURUSD", "USDJPY", "GBPUSD", "USDCHF", "USDCAD", "AUDUSD", "NZDUSD",
-  "EURJPY", "EURGBP", "EURAUD", "EURCHF", "EURCAD", "EURNZD", "GBPJPY",
-  "GBPCHF", "AUDJPY", "CHFJPY", "CADJPY", "AUDCAD", "AUDCHF", "AUDNZD",
-  "CADCHF", "NZDJPY", "NZDCAD", "XAUUSD"
+  "EURUSD","USDJPY","GBPUSD","USDCHF","USDCAD","AUDUSD","NZDUSD",
+  "EURJPY","EURGBP","EURAUD","EURCHF","EURCAD","EURNZD","GBPJPY",
+  "GBPCHF","AUDJPY","CHFJPY","CADJPY","AUDCAD","AUDCHF","AUDNZD",
+  "CADCHF","NZDJPY","NZDCAD","XAUUSD"
 ];
 
-const timeframes = ["M1", "M5", "M15", "M30", "H1", "H4", "D1", "W1", "MN"];
+const timeframes = ["M1","M5","M15","M30","H1","H4","D1","W1","MN"];
 
 const indikatorMT4 = [
-  "Moving Average", "MACD", "RSI", "Bollinger Bands", "Stochastic",
-  "ADX", "CCI", "ATR", "Momentum", "Williams %R",
-  "Parabolic SAR", "Ichimoku Kinko Hyo", "Envelopes", "DeMarker"
+  "Moving Average","MACD","RSI","Bollinger Bands","Stochastic",
+  "ADX","CCI","ATR","Momentum","Williams %R",
+  "Parabolic SAR","Ichimoku Kinko Hyo","Envelopes","DeMarker"
 ];
 
 const pairSelect = document.getElementById("pair");
@@ -20,12 +20,11 @@ const indikator1Select = document.getElementById("indikator1");
 const indikator2Select = document.getElementById("indikator2");
 const indikator3Select = document.getElementById("indikator3");
 
-const anomaliDataDiv = document.getElementById("anomali-data");
 const teknikalDataDiv = document.getElementById("teknikal-data");
 const newsListUl = document.getElementById("news-list");
 const popupNotifDiv = document.getElementById("popup-notif");
 
-function populateSelect(selectElem, options, defaultVal = null) {
+function populateSelect(selectElem, options, defaultVal=null) {
   selectElem.innerHTML = "";
   options.forEach(opt => {
     const el = document.createElement("option");
@@ -56,39 +55,29 @@ function fetchRealtimeData(pair, timeframe, indikatorArr) {
   });
 }
 
-function fetchNews(pair) {
-  const proxy = "https://corsproxy.io/?";
-  const rssUrl = "https://nfs.faireconomy.media/ff_calendar_thisweek.xml";
+function fetchNewsGNews(pair) {
+  const apiKey = "7M31UV6P749OUDDE"; // GNews API Key
+  const query = pair.replace("/", "");
+  const url = `https://gnews.io/api/v4/search?q=${query}&lang=en&token=${apiKey}`;
 
-  fetch(proxy + rssUrl)
-    .then(res => res.text())
-    .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+  newsListUl.innerHTML = "<li>Memuat berita...</li>";
+
+  fetch(url)
+    .then(res => res.json())
     .then(data => {
-      const items = data.querySelectorAll("item");
-      const base = pair.includes("/") ? pair.split("/")[0] : pair.slice(0, 3);
-
       newsListUl.innerHTML = "";
-      let count = 0;
-
-      items.forEach(item => {
-        const title = item.querySelector("title")?.textContent || "";
-        const currencyMatch = title.includes(base);
-
-        if (currencyMatch && count < 10) {
-          const li = document.createElement("li");
-          li.textContent = title;
-          newsListUl.appendChild(li);
-          count++;
-        }
-      });
-
-      if (count === 0) {
-        newsListUl.innerHTML = "<li>Tidak ada berita terkait pasangan saat ini.</li>";
+      if (!data.articles || data.articles.length === 0) {
+        newsListUl.innerHTML = "<li>Tidak ada berita terkini.</li>";
+        return;
       }
+      data.articles.slice(0, 5).forEach(article => {
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="${article.url}" target="_blank">${article.title}</a>`;
+        newsListUl.appendChild(li);
+      });
     })
     .catch(err => {
-      console.error("Gagal memuat berita RSS:", err);
-      newsListUl.innerHTML = "<li>Gagal memuat berita dari Forex Factory.</li>";
+      newsListUl.innerHTML = `<li>Gagal memuat berita (${err.message}).</li>`;
     });
 }
 
@@ -101,13 +90,12 @@ function updateData() {
   document.getElementById("anomali-value").textContent = "Memuat...";
   document.getElementById("tujuan-value").textContent = "Memuat...";
   teknikalDataDiv.textContent = "Memuat data...";
-  newsListUl.innerHTML = "";
+  newsListUl.innerHTML = "<li>Memuat...</li>";
   document.getElementById("anomali-sumber").innerHTML = "";
 
   fetchRealtimeData(pair, timeframe, indikatorArr)
     .then(data => {
-      let isBuy = data.anomali.includes("Buy");
-
+      const isBuy = data.anomali.includes("Buy");
       document.getElementById("anomali-value").textContent = isBuy ? "Buy" : "Sell";
       document.getElementById("tujuan-value").textContent = isBuy ? "Buy" : "Sell";
 
@@ -128,12 +116,11 @@ function updateData() {
       });
     });
 
-  // NEWS UPDATE
-  fetchNews(pair);
+  fetchNewsGNews(pair);
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  populateSelect(pairSelect, pairs.map(p => p.includes("/") ? p : `${p.slice(0, 3)}/${p.slice(3, 6)}`), "EUR/USD");
+  populateSelect(pairSelect, pairs.map(p => p.includes("/") ? p : `${p.slice(0,3)}/${p.slice(3,6)}`), "EUR/USD");
   populateSelect(timeframeSelect, timeframes, "H1");
   populateSelect(indikator1Select, indikatorMT4);
   populateSelect(indikator2Select, indikatorMT4);
