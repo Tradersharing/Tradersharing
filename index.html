@@ -11,76 +11,89 @@
       background-size: contain;
       width: 24px;
       height: 24px;
+      filter: hue-rotate(45deg) brightness(1.2) saturate(2);
+    }
+    body, html {
+      height: 100vh;
+      overflow: hidden;
+    }
+    .container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-y: auto;
+      padding-bottom: 1rem;
     }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="logo">Tradersharing</div>
-    <div class="notif-icon" id="notif-icon" title="Notifikasi"></div>
-  </header>
+  <div class="container">
+    <header class="header">
+      <div class="logo">Tradersharing</div>
+      <div class="notif-icon" id="notif-icon" title="Notifikasi"></div>
+    </header>
 
-  <div class="pair-box">Pasangan Mata Uang =
-    <select id="pair" class="smooth-select"></select>
-  </div>
-
-  <!-- Kotak Anomali -->
-  <div class="box blue-box">
-    <div class="title-3d" style="text-align: center;">Anomali Price Action</div>
-    <div style="text-align:center; font-size: 1.3rem; font-weight: bold;">
-      Anomali = <span id="hasil-anomali">BUY</span><br>
-      Tujuan = <span id="hasil-tujuan">BUY</span>
+    <div class="pair-box">Pasangan Mata Uang =
+      <select id="pair" class="smooth-select"></select>
     </div>
-    <div style="text-align:left; margin-top: 1rem; font-size: 0.95rem; line-height: 1.6rem;">
-      <ul style="padding-left: 1.2rem; margin: 0;">
-        <li><strong>myfxbook</strong> buy % / sell %</li>
-        <li><strong>fxblue</strong> buy % / sell %</li>
-        <li><strong>tradingview</strong> buy % / sell %</li>
+
+    <!-- Kotak Anomali -->
+    <div class="box blue-box">
+      <div class="title-3d" style="text-align: center;">Anomali Price Action</div>
+      <div style="text-align:center; font-size: 1.3rem; font-weight: bold;">
+        Anomali = <span id="hasil-anomali">BUY</span><br>
+        Tujuan = <span id="hasil-tujuan">BUY</span>
+      </div>
+      <div style="text-align:left; margin-top: 1rem; font-size: 0.95rem; line-height: 1.6rem;">
+        <ul style="padding-left: 1.2rem; margin: 0;">
+          <li><strong>myfxbook</strong> buy % / sell %</li>
+          <li><strong>fxblue</strong> buy % / sell %</li>
+          <li><strong>tradingview</strong> buy % / sell %</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Kotak News -->
+    <div class="box news-box">
+      <div class="title-3d" style="text-align: center;">News Terkini</div>
+      <ul id="news-list">
+        <li>Memuat news...</li>
       </ul>
-      <div style="font-size: 0.85rem; color: #ccd6f6; margin-top: 0.5rem;">Hasil % di dapatkan dari data asli ketiga web.</div>
     </div>
-  </div>
 
-  <!-- Kotak News -->
-  <div class="box news-box">
-    <div class="title-3d" style="text-align: center;">News Terkini</div>
-    <ul id="news-list">
-      <li>Memuat news...</li>
-    </ul>
-  </div>
+    <!-- Kotak Teknikal -->
+    <div class="box teknikal-box">
+      <div class="title-3d" style="text-align: center;">Teknikal Price Action</div>
+      <div class="controls" style="flex-direction: column; align-items: flex-start; gap: 0.7rem;">
+        <div>
+          <label for="timeframe">Timeframe:</label><br>
+          <select id="timeframe" class="smooth-select"></select>
+        </div>
 
-  <!-- Kotak Teknikal -->
-  <div class="box teknikal-box">
-    <div class="title-3d" style="text-align: center;">Teknikal Price Action</div>
-    <div class="controls" style="flex-direction: column; align-items: flex-start; gap: 0.7rem;">
-      <div>
-        <label for="timeframe">Timeframe:</label><br>
-        <select id="timeframe" class="smooth-select"></select>
+        <div>
+          <label for="indikator1">Indikator 1:</label><br>
+          <select id="indikator1" class="smooth-select"></select>
+        </div>
+
+        <div>
+          <label for="indikator2">Indikator 2:</label><br>
+          <select id="indikator2" class="smooth-select"></select>
+        </div>
+
+        <div>
+          <label for="indikator3">Indikator 3:</label><br>
+          <select id="indikator3" class="smooth-select"></select>
+        </div>
       </div>
-
-      <div>
-        <label for="indikator1">Indikator 1:</label><br>
-        <select id="indikator1" class="smooth-select"></select>
-      </div>
-
-      <div>
-        <label for="indikator2">Indikator 2:</label><br>
-        <select id="indikator2" class="smooth-select"></select>
-      </div>
-
-      <div>
-        <label for="indikator3">Indikator 3:</label><br>
-        <select id="indikator3" class="smooth-select"></select>
+      <div class="content-line" style="text-align: center; font-weight: 500; margin-top: 1rem;">
+        BUY % = <span id="hasil-buy">Sedang</span><br>
+        SELL % = <span id="hasil-sell">Lemah</span>
       </div>
     </div>
-    <div class="content-line" style="text-align: center; font-weight: 500; margin-top: 1rem;">
-      BUY % = <span id="hasil-buy">Sedang</span><br>
-      SELL % = <span id="hasil-sell">Lemah</span>
-    </div>
-  </div>
 
-  <!-- Notifikasi (disembunyikan jika belum aktif) -->
-  <div id="popup-notif" class="popup-notif hidden"></div>
+    <div id="popup-notif" class="popup-notif hidden"></div>
+  </div>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
