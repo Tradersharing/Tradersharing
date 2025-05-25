@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tradersharing</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Tradersharing</h1>
+  </header>
+
+  <section class="pair-info">
+    <p>Pasangan Mata Uang = <span id="pair-label">GBP/USD</span></p>
+  </section>
+
+  <section class="anomali-box">
+    <h2>Anomali Price Action</h2>
+    <p>Anomali: <span id="anomali-value" class="buy">-</span></p>
+    <p>Tujuan: <span id="tujuan-value" class="buy">-</span></p>
+    <p>Myfxbook: <span id="myfxbook-value">-</span></p>
+    <p>FXBlue: <span id="fxblue-value">-</span></p>
+    <p>TradingView: <span id="tradingview-value">-</span></p>
+  </section>
+
+  <section class="news-box">
+    <h2>News Hari Ini</h2>
+    <ul id="news-list" class="news-list"></ul>
+  </section>
+
+  <section class="teknikal-box">
+    <h2>Teknikal Price Action</h2>
+    <div id="teknikal-data">Pilih indikator untuk melihat sinyal teknikal</div>
+  </section>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="firebase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
