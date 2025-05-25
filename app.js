@@ -1,4 +1,4 @@
-// Data dasar
+// Data dasar tetap sama
 const pairs = [
   "EURUSD","USDJPY","GBPUSD","USDCHF","USDCAD","AUDUSD","NZDUSD",
   "EURJPY","EURGBP","EURAUD","EURCHF","EURCAD","EURNZD","GBPJPY",
@@ -21,10 +21,13 @@ const indikator1Select = document.getElementById("indikator1");
 const indikator2Select = document.getElementById("indikator2");
 const indikator3Select = document.getElementById("indikator3");
 
+const anomaliValueSpan = document.getElementById("hasil-anomali");
+const tujuanValueSpan = document.getElementById("hasil-tujuan");
 const newsListUl = document.getElementById("news-list");
+const hasilBuySpan = document.getElementById("hasil-buy");
+const hasilSellSpan = document.getElementById("hasil-sell");
 const popupNotifDiv = document.getElementById("popup-notif");
 
-// API Key GNews kamu di sini
 const GNEWS_API_KEY = "7M31UV6P749OUDDE";
 
 // Fungsi isi select box
@@ -39,21 +42,20 @@ function populateSelect(selectElem, options, defaultVal=null) {
   if (defaultVal) selectElem.value = defaultVal;
 }
 
-// Popup notif sederhana
 function showPopupNotif(message) {
   popupNotifDiv.textContent = message;
   popupNotifDiv.classList.remove("hidden");
   setTimeout(() => popupNotifDiv.classList.add("hidden"), 4000);
 }
 
-// Fetch berita dari GNews API, pakai proxy CORS supaya bisa jalan di GitHub Pages
+// Fetch berita GNews
 async function fetchNews(query) {
   const proxy = "https://corsproxy.io/?";
   const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=id&max=5&apikey=${GNEWS_API_KEY}`;
 
   try {
     const res = await fetch(proxy + url);
-    if (!res.ok) throw new Error("Gagal fetch news");
+    if (!res.ok) throw new Error("Gagal fetch news, status: " + res.status);
     const data = await res.json();
 
     if (!data.articles || data.articles.length === 0) {
@@ -73,14 +75,29 @@ async function fetchNews(query) {
   }
 }
 
-// Dummy fungsi updateData buat bagian anomali & teknikal, fokus di news
+// Dummy update anomali & teknikal, fokus biar tetap jalan
+function updateAnomaliTeknikal(pair) {
+  // Contoh isi dummy
+  anomaliValueSpan.textContent = "BUY";
+  tujuanValueSpan.textContent = "BUY";
+  hasilBuySpan.textContent = "Sedang";
+  hasilSellSpan.textContent = "Lemah";
+}
+
+// Update semua data
 function updateData() {
-  const pair = pairSelect.value.replace("/", "");
-  // Update news sesuai pair (misal cari berita EURUSD jadi "EURUSD" keyword)
+  const pairRaw = pairSelect.value;
+  const pair = pairRaw.replace("/", "");
+
+  // Update bagian anomali & teknikal
+  updateAnomaliTeknikal(pair);
+
+  // Update news (async, tapi tidak blocking)
+  newsListUl.innerHTML = "<li>Memuat news...</li>";
   fetchNews(pair);
 }
 
-// Event listener dan inisialisasi
+// Init
 window.addEventListener("DOMContentLoaded", () => {
   populateSelect(pairSelect, pairs, "EURUSD");
   populateSelect(timeframeSelect, timeframes, "H1");
