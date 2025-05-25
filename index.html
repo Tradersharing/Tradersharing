@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tradersharing</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="logo">Tradersharing</div>
+    <div class="notif-icon" id="notif-icon" title="Notifikasi">🔔</div>
+  </header>
+
+  <div class="pair-display">
+    <label for="pair"><strong>Pilih Pair:</strong></label>
+    <select id="pair"></select>
+    <span id="selected-pair">GBP/USD</span>
+  </div>
+
+  <div class="box anomali-box">
+    <div class="center-title">Anomali Price Action</div>
+    <div class="anomaly-output"><span class="label">PAIR:</span> <span id="pair-label">-</span></div>
+    <div class="anomaly-output"><span class="label">Anomali:</span> <span id="anomali-value" class="buy">-</span></div>
+    <div class="anomaly-output"><span class="label">Tujuan:</span> <span id="tujuan-value" class="buy">-</span></div>
+    <div class="anomaly-sources">
+      <ul>
+        <li>• Myfxbook: <span id="myfxbook-value">-</span></li>
+        <li>• FXBlue: <span id="fxblue-value">-</span></li>
+        <li>• TradingView: <span id="tradingview-value">-</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="box news-box">
+    <div class="center-title">Berita Terkait</div>
+    <ul id="news-list" class="news-list">
+      <li>Memuat berita...</li>
+    </ul>
+  </div>
+
+  <div class="box teknikal-box">
+    <div class="center-title">Teknikal Price Action</div>
+    <div class="controls vertical-controls">
+      <label for="timeframe">Timeframe:</label>
+      <select id="timeframe"></select>
+
+      <label for="indikator1">Indikator 1:</label>
+      <select id="indikator1"></select>
+
+      <label for="indikator2">Indikator 2:</label>
+      <select id="indikator2"></select>
+
+      <label for="indikator3">Indikator 3:</label>
+      <select id="indikator3"></select>
+    </div>
+    <div id="teknikal-data" class="hasil-teknikal">Pilih indikator untuk melihat sinyal teknikal</div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
