@@ -9,7 +9,7 @@
 <body>
   <header class="header">
     <div class="logo">Tradersharing</div>
-    <div class="notif-icon" id="notif-icon"></div>
+    <div class="notif-icon" id="notif-icon" title="Notifikasi"></div>
   </header>
 
   <div class="pair-box">Pasangan Mata Uang =
@@ -45,8 +45,15 @@
   <!-- Kotak Anomali -->
   <div class="box blue-box">
     <div class="title-3d">Anomali Price Action</div>
-    <div class="content-line">Memuat data anomali...</div>
-    <div class="content-line">Memuat data tujuan...</div>
+    <div class="content-line" style="text-align:center; font-size: 1.2rem; font-weight: bold;">
+      Anomali = <span id="hasil-anomali">BUY</span><br>
+      Tujuan sama dengan = <span id="hasil-tujuan">BUY</span>
+    </div>
+    <div class="content-line">
+      <strong>myfxbook</strong>: <span id="myfxbook-buy">Buy 65%</span> / <span id="myfxbook-sell">Sell 35%</span><br>
+      <strong>fxblue</strong>: <span id="fxblue-buy">Buy 60%</span> / <span id="fxblue-sell">Sell 40%</span><br>
+      <strong>TradingView</strong>: <span id="tv-buy">Buy 70%</span> / <span id="tv-sell">Sell 30%</span>
+    </div>
   </div>
 
   <!-- Kotak News -->
@@ -62,55 +69,21 @@
     <div class="title-3d">Teknikal Price Action</div>
     <div class="controls">
       <label for="timeframe">Timeframe:</label>
-      <select id="timeframe">
-        <option>M1</option>
-        <option>M5</option>
-        <option>M15</option>
-        <option>M30</option>
-        <option>H1</option>
-        <option>H4</option>
-        <option>D1</option>
-        <option>W1</option>
-        <option>MN</option>
-      </select>
+      <select id="timeframe" class="smooth-select"></select>
 
       <label for="indikator1">Indikator 1:</label>
-      <select id="indikator1">
-        <option>None</option>
-        <option>Moving Average</option>
-        <option>MACD</option>
-        <option>RSI</option>
-        <option>Stochastic Oscillator</option>
-        <option>CCI</option>
-        <option>ADX</option>
-        <option>Bollinger Bands</option>
-        <option>Ichimoku Kinko Hyo</option>
-        <option>Envelopes</option>
-        <option>ATR</option>
-        <option>Alligator</option>
-        <option>Awesome Oscillator</option>
-        <option>Fractals</option>
-        <option>Gator Oscillator</option>
-        <option>Heiken Ashi</option>
-        <option>Momentum</option>
-        <option>Parabolic SAR</option>
-        <option>Standard Deviation</option>
-        <option>Williams %R</option>
-      </select>
+      <select id="indikator1" class="smooth-select"></select>
 
       <label for="indikator2">Indikator 2:</label>
-      <select id="indikator2">
-        <option>None</option>
-        <!-- sama seperti indikator1 -->
-      </select>
+      <select id="indikator2" class="smooth-select"></select>
 
       <label for="indikator3">Indikator 3:</label>
-      <select id="indikator3">
-        <option>None</option>
-        <!-- sama seperti indikator1 -->
-      </select>
+      <select id="indikator3" class="smooth-select"></select>
     </div>
-    <div class="content-line">Pilih indikator teknikal</div>
+    <div class="content-line">
+      BUY % = <span id="hasil-buy">Sedang</span><br>
+      SELL % = <span id="hasil-sell">Lemah</span>
+    </div>
   </div>
 
   <div id="popup-notif" class="popup-notif hidden">Notifikasi</div>
