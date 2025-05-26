@@ -2,88 +2,85 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tradersharing</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    .notif-icon {
-      background: url('https://cdn-icons-png.flaticon.com/512/1827/1827392.png') no-repeat center center;
-      background-size: contain;
-      width: 24px;
-      height: 24px;
-      filter: hue-rotate(45deg) brightness(1.2) saturate(2);
-    }
-  </style>
 </head>
 <body>
-  <header class="header">
-    <div class="logo">Tradersharing</div>
-    <div class="notif-icon" id="notif-icon" title="Notifikasi"></div>
+  <header>
+    <h1>Tradersharing</h1>
   </header>
 
-  <div class="pair-box">Pasangan Mata Uang =
-    <select id="pair" class="smooth-select"></select>
-  </div>
+  <section class="pair-info">
+    <p>Pasangan Mata Uang = <span id="pair-label">GBP/USD</span></p>
+  </section>
 
-  <!-- Kotak Anomali -->
-  <div class="box blue-box">
-    <div class="title-3d" style="text-align: center;">Anomali Price Action</div>
-    <div style="text-align:center; font-size: 1.3rem; font-weight: bold;">
-      Anomali = <span id="hasil-anomali">BUY</span><br>
-      Tujuan = <span id="hasil-tujuan">BUY</span>
-    </div>
-    <div style="text-align:left; margin-top: 1rem; font-size: 0.95rem; line-height: 1.6rem;">
-      <ul style="padding-left: 1.2rem; margin: 0;">
-        <li><strong>myfxbook</strong> buy % / sell %</li>
-        <li><strong>fxblue</strong> buy % / sell %</li>
-        <li><strong>tradingview</strong> buy % / sell %</li>
-      </ul>
-    </div>
-  </div>
+  <section class="anomali-box">
+    <h2>Anomali Price Action</h2>
+    <p>Anomali: <span id="anomali-value" class="buy">-</span></p>
+    <p>Tujuan: <span id="tujuan-value" class="buy">-</span></p>
+    <p>Myfxbook: <span id="myfxbook-value">-</span></p>
+    <p>FXBlue: <span id="fxblue-value">-</span></p>
+    <p>TradingView: <span id="tradingview-value">-</span></p>
+  </section>
 
-  <!-- Kotak News -->
-  <div class="box news-box">
-    <div class="title-3d" style="text-align: center;">News Terkini</div>
-    <ul id="news-list">
-      <li>Memuat news...</li>
-    </ul>
-  </div>
+  <section class="news-box">
+    <h2>News Hari Ini</h2>
+    <ul id="news-list" class="news-list"></ul>
+  </section>
 
-  <!-- Kotak Teknikal -->
-  <div class="box teknikal-box">
-    <div class="title-3d" style="text-align: center;">Teknikal Price Action</div>
-    <div class="controls" style="flex-direction: column; align-items: flex-start; gap: 0.7rem;">
-      <div>
-        <label for="timeframe">Timeframe:</label><br>
-        <select id="timeframe" class="smooth-select"></select>
-      </div>
-
-      <div>
-        <label for="indikator1">Indikator 1:</label><br>
-        <select id="indikator1" class="smooth-select"></select>
-      </div>
-
-      <div>
-        <label for="indikator2">Indikator 2:</label><br>
-        <select id="indikator2" class="smooth-select"></select>
-      </div>
-
-      <div>
-        <label for="indikator3">Indikator 3:</label><br>
-        <select id="indikator3" class="smooth-select"></select>
-      </div>
-    </div>
-    <div class="content-line" style="text-align: center; font-weight: 500; margin-top: 1rem;">
-      BUY % = <span id="hasil-buy">Sedang</span><br>
-      SELL % = <span id="hasil-sell">Lemah</span>
-    </div>
-  </div>
-
-  <div id="popup-notif" class="popup-notif hidden"></div>
+  <section class="teknikal-box">
+    <h2>Teknikal Price Action</h2>
+    <div id="teknikal-data">Pilih indikator untuk melihat sinyal teknikal</div>
+  </section>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script src="firebase.js"></script>
   <script src="app.js"></script>
+
+  <script>
+    async function getNewsByPair() {
+      const apiKey = "debe7fd5a47c460c9e886d110bc8d5d6";
+      const url = `https://newsapi.org/v2/top-headlines?category=business&language=id&apiKey=${apiKey}`;
+
+      const pairText = document.getElementById("pair-label").textContent;
+      const [base, quote] = pairText.split("/");
+      const keywords = [base.trim().toUpperCase(), quote.trim().toUpperCase()];
+
+      try {
+        const response = await fetch(url);
+        const result = await response.json();
+
+        const newsList = document.getElementById("news-list");
+        newsList.innerHTML = "";
+
+        if (result.articles && result.articles.length > 0) {
+          const filtered = result.articles.filter(article => {
+            const title = article.title.toUpperCase();
+            return keywords.some(keyword => title.includes(keyword));
+          });
+
+          if (filtered.length > 0) {
+            filtered.slice(0, 5).forEach(item => {
+              const li = document.createElement("li");
+              li.textContent = "• " + item.title;
+              newsList.appendChild(li);
+            });
+          } else {
+            newsList.innerHTML = "<li>Tidak ada berita penting hari ini</li>";
+          }
+        } else {
+          newsList.innerHTML = "<li>Tidak ada berita penting hari ini</li>";
+        }
+      } catch (error) {
+        console.error("Gagal mengambil berita:", error);
+        document.getElementById("news-list").innerHTML =
+          "<li>Gagal mengambil data berita</li>";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", getNewsByPair);
+  </script>
 </body>
 </html>
