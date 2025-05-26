@@ -1,44 +1,58 @@
-<div class="box anomali-box">
-  <div class="title-3d">Anomali Price Action</div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tradersharing</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
-  <div class="anomaly-output" style="text-align: center;">
-    <span class="label">PAIR:</span> <span id="pair-label">EUR/USD</span>
+  <div class="header">
+    <div class="logo">Tradersharing</div>
+    <div class="notif-icon" id="notif-icon">🔔</div>
   </div>
 
-  <div class="anomaly-output" style="text-align: center;">
-    <span class="label">Anomali:</span> <span id="anomali-value" class="buy">Buy</span>
+  <div class="pair-display">
+    <label for="pair"><strong>Pilih Pair:</strong></label>
+    <select id="pair" class="smooth-select"></select>
   </div>
 
-  <div class="anomaly-output" style="text-align: center;">
-    <span class="label">Tujuan:</span> <span id="tujuan-value" class="buy">1.2000</span>
+  <div class="box anomali-box">
+    <div class="title-3d">Anomali Price Action</div>
+    <div class="anomaly-output"><span class="label">PAIR:</span> <span id="pair-label">-</span></div>
+    <div class="anomaly-output"><span class="label">Anomali:</span> <span id="anomali-value" class="buy">-</span></div>
+    <div class="anomaly-output"><span class="label">Tujuan:</span> <span id="tujuan-value" class="buy">-</span></div>
+    <ul id="anomali-sumber"></ul>
   </div>
 
-  <ul id="anomali-sumber" style="list-style: none; padding-left: 0;">
-    <li>• myfxbook buy 70% sell 30%</li>
-    <li>• fxblue buy 65% sell 35%</li>
-    <li>• tradingview buy 60% sell 40%</li>
-  </ul>
-</div>
-
-<div class="box teknikal-box">
-  <div class="title-3d">Teknikal Price Action</div>
-
-  <div class="controls vertical-controls">
-    <label for="timeframe">Timeframe:</label>
-    <select id="timeframe" class="smooth-select"></select>
-
-    <label for="indikator1">Indikator 1:</label>
-    <select id="indikator1" class="smooth-select"></select>
-
-    <label for="indikator2">Indikator 2:</label>
-    <select id="indikator2" class="smooth-select"></select>
-
-    <label for="indikator3">Indikator 3:</label>
-    <select id="indikator3" class="smooth-select"></select>
+  <div class="box news-box">
+    <div class="title-3d">Berita Terkait</div>
+    <ul id="news-list" class="news-list">
+      <li>Memuat berita...</li>
+    </ul>
   </div>
 
-  <div id="teknikal-data" class="hasil-teknikal" style="text-align: center;">
-    Buy % = netral<br>
-    Sell % = lemah
+  <div class="box teknikal-box">
+    <div class="title-3d">Teknikal Price Action</div>
+    <div class="controls vertical-controls">
+      <label for="timeframe">Timeframe:</label>
+      <select id="timeframe" class="smooth-select"></select>
+
+      <label for="indikator1">Indikator 1:</label>
+      <select id="indikator1" class="smooth-select"></select>
+
+      <label for="indikator2">Indikator 2:</label>
+      <select id="indikator2" class="smooth-select"></select>
+
+      <label for="indikator3">Indikator 3:</label>
+      <select id="indikator3" class="smooth-select"></select>
+    </div>
+    <div id="teknikal-data" class="hasil-teknikal">Pilih indikator untuk melihat sinyal teknikal</div>
   </div>
-</div>
+
+  <div id="popup-notif" class="popup-notif hidden">Notifikasi</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
