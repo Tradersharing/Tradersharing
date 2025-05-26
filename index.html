@@ -14,92 +14,46 @@
 
   <div class="pair-display">
     <label for="pair"><strong>Pilih Pair:</strong></label>
-    <select id="pair"></select>
-    <span id="selected-pair">GBP/USD</span>
+    <select id="pair" class="smooth-select"></select>
+    <span id="selected-pair">EUR/USD</span>
   </div>
 
   <div class="box anomali-box">
-    <div class="center-title">Anomali Price Action</div>
-    <div class="anomaly-output"><span class="label">PAIR:</span> <span id="pair-label">-</span></div>
-    <div class="anomaly-output"><span class="label">Anomali:</span> <span id="anomali-value" class="buy">-</span></div>
-    <div class="anomaly-output"><span class="label">Tujuan:</span> <span id="tujuan-value" class="buy">-</span></div>
-    <div class="anomaly-sources">
-      <ul>
-        <li>• Myfxbook: <span id="myfxbook-value">-</span></li>
-        <li>• FXBlue: <span id="fxblue-value">-</span></li>
-        <li>• TradingView: <span id="tradingview-value">-</span></li>
-      </ul>
-    </div>
+    <div class="title-3d">Anomali Price Action</div>
+    <div class="anomaly-output"><strong>PAIR:</strong> <span id="pair-label">-</span></div>
+    <div class="anomaly-output"><strong>Anomali:</strong> <span id="anomali-value" class="buy">-</span></div>
+    <div class="anomaly-output"><strong>Tujuan:</strong> <span id="tujuan-value" class="buy">-</span></div>
+    <div class="anomaly-output"><strong>Sumber:</strong></div>
+    <ul id="anomali-sumber" class="news-list"></ul>
   </div>
 
   <div class="box news-box">
-    <div class="center-title">Berita Terkait</div>
+    <div class="title-3d">Berita Terkait</div>
     <ul id="news-list" class="news-list">
       <li>Memuat berita...</li>
     </ul>
   </div>
 
   <div class="box teknikal-box">
-    <div class="center-title">Teknikal Price Action</div>
+    <div class="title-3d">Teknikal Price Action</div>
     <div class="controls vertical-controls">
       <label for="timeframe">Timeframe:</label>
-      <select id="timeframe"></select>
+      <select id="timeframe" class="smooth-select"></select>
 
       <label for="indikator1">Indikator 1:</label>
-      <select id="indikator1"></select>
+      <select id="indikator1" class="smooth-select"></select>
 
       <label for="indikator2">Indikator 2:</label>
-      <select id="indikator2"></select>
+      <select id="indikator2" class="smooth-select"></select>
 
       <label for="indikator3">Indikator 3:</label>
-      <select id="indikator3"></select>
+      <select id="indikator3" class="smooth-select"></select>
     </div>
     <div id="teknikal-data" class="hasil-teknikal">Pilih indikator untuk melihat sinyal teknikal</div>
   </div>
 
+  <div id="popup-notif" class="popup-notif hidden">Notifikasi</div>
+
   <script src="js/app.js"></script>
-  <script>
-    async function getNewsByPair() {
-      const apiKey = "debe7fd5a47c460c9e886d110bc8d5d6";
-      const url = `https://newsapi.org/v2/top-headlines?category=business&language=id&apiKey=${apiKey}`;
-
-      const pairText = document.getElementById("selected-pair").textContent || "GBP/USD";
-      const [base, quote] = pairText.split("/") || ["GBP", "USD"];
-      const keywords = [base.trim().toUpperCase(), quote.trim().toUpperCase()];
-
-      try {
-        const response = await fetch(url);
-        const result = await response.json();
-
-        const newsList = document.getElementById("news-list");
-        newsList.innerHTML = "";
-
-        if (result.articles && result.articles.length > 0) {
-          const filtered = result.articles.filter(article => {
-            const title = article.title.toUpperCase();
-            return keywords.some(keyword => title.includes(keyword));
-          });
-
-          if (filtered.length > 0) {
-            filtered.slice(0, 5).forEach(item => {
-              const li = document.createElement("li");
-              li.textContent = "• " + item.title;
-              newsList.appendChild(li);
-            });
-          } else {
-            newsList.innerHTML = "<li>Tidak ada berita penting hari ini</li>";
-          }
-        } else {
-          newsList.innerHTML = "<li>Tidak ada berita penting hari ini</li>";
-        }
-      } catch (error) {
-        console.error("Gagal mengambil berita:", error);
-        document.getElementById("news-list").innerHTML =
-          "<li>Gagal mengambil data berita</li>";
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", getNewsByPair);
-  </script>
 </body>
 </html>
