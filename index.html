@@ -2,49 +2,69 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tradersharing</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header>
-    <h1>Tradersharing</h1>
-    <p>Pasangan Mata Uang = <span id="pair-label">EURUSD</span></p>
+  <header class="header">
+    <div class="logo">Tradersharing</div>
+    <div class="notif-icon" id="notif-icon" title="Notifikasi">🔔</div>
   </header>
 
-  <section class="anomali-box">
-    <h2>Anomali Price Action</h2>
-    <p>Anomali: <span id="anomali-value" class="buy">-</span></p>
-    <p>Tujuan: <span id="tujuan-value" class="buy">-</span></p>
-    <p>Myfxbook: <span id="myfxbook-value">-</span></p>
-    <p>FXBlue: <span id="fxblue-value">-</span></p>
-    <p>TradingView: <span id="tradingview-value">-</span></p>
-  </section>
+  <div class="pair-display">
+    <label for="pair"><strong>Pilih Pair:</strong></label>
+    <select id="pair"></select>
+    <span id="selected-pair">GBP/USD</span>
+  </div>
 
-  <section class="news-box">
-    <h2>News Terkini</h2>
+  <div class="box anomali-box">
+    <div class="center-title">Anomali Price Action</div>
+    <div class="anomaly-output"><span class="label">PAIR:</span> <span id="pair-label">-</span></div>
+    <div class="anomaly-output"><span class="label">Anomali:</span> <span id="anomali-value" class="buy">-</span></div>
+    <div class="anomaly-output"><span class="label">Tujuan:</span> <span id="tujuan-value" class="buy">-</span></div>
+    <div class="anomaly-sources">
+      <ul>
+        <li>• Myfxbook: <span id="myfxbook-value">-</span></li>
+        <li>• FXBlue: <span id="fxblue-value">-</span></li>
+        <li>• TradingView: <span id="tradingview-value">-</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="box news-box">
+    <div class="center-title">Berita Terkait</div>
     <ul id="news-list" class="news-list">
-      <li>Memuat news...</li>
+      <li>Memuat berita...</li>
     </ul>
-  </section>
+  </div>
 
-  <section class="teknikal-box">
-    <h2>Teknikal Price Action</h2>
-    <div id="teknikal-data">Pilih indikator untuk melihat sinyal teknikal</div>
-  </section>
+  <div class="box teknikal-box">
+    <div class="center-title">Teknikal Price Action</div>
+    <div class="controls vertical-controls">
+      <label for="timeframe">Timeframe:</label>
+      <select id="timeframe"></select>
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <script src="firebase.js"></script>
-  <script src="app.js"></script>
+      <label for="indikator1">Indikator 1:</label>
+      <select id="indikator1"></select>
 
+      <label for="indikator2">Indikator 2:</label>
+      <select id="indikator2"></select>
+
+      <label for="indikator3">Indikator 3:</label>
+      <select id="indikator3"></select>
+    </div>
+    <div id="teknikal-data" class="hasil-teknikal">Pilih indikator untuk melihat sinyal teknikal</div>
+  </div>
+
+  <script src="js/app.js"></script>
   <script>
     async function getNewsByPair() {
       const apiKey = "debe7fd5a47c460c9e886d110bc8d5d6";
       const url = `https://newsapi.org/v2/top-headlines?category=business&language=id&apiKey=${apiKey}`;
 
-      const pairText = document.getElementById("pair-label").textContent;
-      const [base, quote] = pairText.split("/") || pairText.match(/.{1,3}/g) || ["EUR", "USD"];
+      const pairText = document.getElementById("selected-pair").textContent || "GBP/USD";
+      const [base, quote] = pairText.split("/") || ["GBP", "USD"];
       const keywords = [base.trim().toUpperCase(), quote.trim().toUpperCase()];
 
       try {
