@@ -9,11 +9,8 @@
 <body>
   <header>
     <h1>Tradersharing</h1>
+    <p>Pasangan Mata Uang = <span id="pair-label">EURUSD</span></p>
   </header>
-
-  <section class="pair-info">
-    <p>Pasangan Mata Uang = <span id="pair-label">GBP/USD</span></p>
-  </section>
 
   <section class="anomali-box">
     <h2>Anomali Price Action</h2>
@@ -25,8 +22,10 @@
   </section>
 
   <section class="news-box">
-    <h2>News Hari Ini</h2>
-    <ul id="news-list" class="news-list"></ul>
+    <h2>News Terkini</h2>
+    <ul id="news-list" class="news-list">
+      <li>Memuat news...</li>
+    </ul>
   </section>
 
   <section class="teknikal-box">
@@ -45,7 +44,7 @@
       const url = `https://newsapi.org/v2/top-headlines?category=business&language=id&apiKey=${apiKey}`;
 
       const pairText = document.getElementById("pair-label").textContent;
-      const [base, quote] = pairText.split("/");
+      const [base, quote] = pairText.split("/") || pairText.match(/.{1,3}/g) || ["EUR", "USD"];
       const keywords = [base.trim().toUpperCase(), quote.trim().toUpperCase()];
 
       try {
