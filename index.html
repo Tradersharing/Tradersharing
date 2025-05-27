@@ -8,25 +8,27 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-
   <div class="header">
     <div class="logo">TraderSharing</div>
     <div class="notif-icon" id="notif-icon">🔔</div>
   </div>
-
   <div class="pair-display">
     <label for="pair"><strong>Pilih Pair:</strong></label>
     <select id="pair" class="smooth-select"></select>
   </div>
 
+  <!-- MYFXBOOK & TRADINGVIEW -->
   <div class="box">
-    <div class="title-3d">Anomali Price Action</div>
-    <div class="anomaly-output"><span class="label">PAIR:</span> <span id="pair-label">-</span></div>
-    <div class="anomaly-output"><span class="label">Anomali:</span> <span id="anomali-value">-</span></div>
-    <div class="anomaly-output"><span class="label">Tujuan:</span> <span id="tujuan-value">-</span></div>
-    <ul id="anomali-sumber"></ul>
+    <div class="title-3d">Myfxbook</div>
+    <div class="anomaly-output"><span class="label">Buy:</span> <span id="myfxbook-buy">-</span></div>
+    <div class="anomaly-output"><span class="label">Sell:</span> <span id="myfxbook-sell">-</span></div>
+    <hr style="opacity:0.13;">
+    <div class="title-3d" style="margin-top:8px">TradingView</div>
+    <div class="anomaly-output"><span class="label">Buy:</span> <span id="tradingview-buy">-</span></div>
+    <div class="anomaly-output"><span class="label">Sell:</span> <span id="tradingview-sell">-</span></div>
   </div>
 
+  <!-- TEKNIKAL -->
   <div class="box">
     <div class="title-3d">Teknikal Price Action</div>
     <label for="timeframe">Timeframe:</label>
@@ -37,9 +39,29 @@
     <select id="indikator2" class="smooth-select"></select>
     <label for="indikator3">Indikator 3:</label>
     <select id="indikator3" class="smooth-select"></select>
-    <div id="teknikal-data" class="hasil-teknikal"></div>
+    <div id="teknikal-data" class="hasil-teknikal">
+      <div class="action-boxes">
+        <div class="action-box buy">
+          <div class="action-title">Buy:</div>
+          <div class="action-value" id="buy-value">0%</div>
+          <div class="action-none" id="buy-detail">none</div>
+        </div>
+        <div class="action-box sell">
+          <div class="action-title">Sell:</div>
+          <div class="action-value" id="sell-value">0%</div>
+          <div class="action-none" id="sell-detail">none</div>
+        </div>
+      </div>
+      <hr style="opacity:0.13;">
+      <div class="market-strength-section">
+        <span class="market-strength-title">Market Strength</span>
+        <a href="#" class="market-strength-link" id="indicator-link">0 indicators</a>
+        <div class="market-strength-bar"></div>
+      </div>
+    </div>
   </div>
 
+  <!-- NEWS -->
   <div class="box">
     <div class="title-3d">Berita Terkait</div>
     <ul id="news-list">
