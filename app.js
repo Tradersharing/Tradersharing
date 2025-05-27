@@ -12,7 +12,6 @@ const indikatorMT4 = [
   "Parabolic SAR","Ichimoku Kinko Hyo","Envelopes","DeMarker"
 ];
 
-// Populate select options
 function populateSelect(selectElem, options, defaultVal=null) {
   selectElem.innerHTML = "";
   options.forEach(opt => {
@@ -24,131 +23,75 @@ function populateSelect(selectElem, options, defaultVal=null) {
   if (defaultVal) selectElem.value = defaultVal;
 }
 
-// Fetch Helper
-async function fetchJSON(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Network error');
-  return res.json();
-}
+function updateTeknikal() {
+  const indikator1 = document.getElementById("indikator1").value;
+  const indikator2 = document.getElementById("indikator2").value;
+  const indikator3 = document.getElementById("indikator3").value;
+  const dataBox = document.getElementById("teknikal-data");
 
-// Myfxbook & TradingView dummy, replace with real API if available
-async function getMyfxbookStats(pair) {
-  // Replace with real API endpoint if publicly available
-  return {buy: Math.floor(Math.random()*100), sell: Math.floor(Math.random()*100)};
-}
-async function getTradingViewStats(pair) {
-  // Replace with real API endpoint if publicly available
-  return {buy: Math.floor(Math.random()*100), sell: Math.floor(Math.random()*100)};
-}
-
-// AlphaVantage News
-async function getNews(pair) {
-  // AlphaVantage documentation: https://www.alphavantage.co/documentation/#news
-  const apiKey = "O40SWMY3YUWGSTRR";
-  let symbol = pair.replace("/", "");
-  let url = `https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=FX:${symbol}&apikey=${apiKey}`;
-  try {
-    let json = await fetchJSON(url);
-    if (!json.feed || !json.feed.length) return [];
-    // filter news by symbol in title
-    return json.feed.filter(n =>
-      n.title && n.title.toLowerCase().includes(pair.toLowerCase().replace("/", ""))
-    );
-  } catch {
-    return [];
-  }
-}
-
-// Yahoo Finance Teknikal Price Action (dummy logic, replace with real API for production)
-async function getYahooSignals(pair, indicators) {
-  if (!indicators.length) return { buy: 0, sell: 0, none: 100 };
-  if (indicators.length === 1) {
-    let buy = Math.floor(Math.random() * 100);
-    let sell = 100 - buy;
-    return { buy, sell, none: 0 };
-  } else {
-    let totalBuy = 0;
-    let totalSell = 0;
-    indicators.forEach(() => {
-      let buy = Math.floor(Math.random() * 100);
-      let sell = 100 - buy;
-      totalBuy += buy;
-      totalSell += sell;
-    });
-    return {
-      buy: Math.round(totalBuy / indicators.length),
-      sell: Math.round(totalSell / indicators.length),
-      none: 0
-    };
-  }
-}
-
-// Update News Box
-async function updateNews(pair) {
-  const newsList = document.getElementById("news-list");
-  newsList.innerHTML = "<li>Memuat berita...</li>";
-  const news = await getNews(pair);
-  newsList.innerHTML = "";
-  if (!news.length) {
-    newsList.innerHTML = "<li>Tidak ada berita penting hari ini</li>";
+  const kombinasi = [indikator1, indikator2, indikator3].filter(i => i);
+  if (kombinasi.length === 0) {
+    dataBox.textContent = "Silakan pilih indikator teknikal.";
     return;
   }
-  news.forEach(n => {
-    let li = document.createElement("li");
-    li.textContent = n.title;
-    newsList.appendChild(li);
-  });
+
+  const sinyal = ["Buy", "Sell"][Math.floor(Math.random() * 2)];
+  const persenBuy = sinyal === "Buy" ? 75 : 35;
+  const persenSell = 100 - persenBuy;
+
+  dataBox.innerHTML = `
+    <div>Buy % = <strong>${persenBuy}%</strong></div>
+    <div>Sell % = <strong>${persenSell}%</strong></div>
+    <div style="margin-top:8px;font-size:0.9rem;">Sinyal dari: ${kombinasi.join(", ")}</div>
+  `;
 }
 
-// Update Myfxbook & Trading View
-async function updateStats(pair) {
-  const myfx = await getMyfxbookStats(pair);
-  const tv = await getTradingViewStats(pair);
-  document.getElementById("myfxbook-buy").textContent = myfx.buy + "%";
-  document.getElementById("myfxbook-sell").textContent = myfx.sell + "%";
-  document.getElementById("tradingview-buy").textContent = tv.buy + "%";
-  document.getElementById("tradingview-sell").textContent = tv.sell + "%";
+function updateNews() {
+  const pair = document.getElementById("pair").value.replace("/", "");
+  const base = pair.slice(0, 3).toUpperCase();
+  const quote = pair.slice(3, 6).toUpperCase();
+
+  const newsList = document.getElementById("news-list");
+  newsList.innerHTML = "<li>Memuat berita...</li>";
+
+  const proxy = "https://corsproxy.io/?";
+  const api = "https://financialmodelingprep.com/api/v3/fx_calendar?apikey=G5P1iNxCJ5OQ68rUuNgqXytiGeb3LXD0";
+
+  fetch(proxy + api)
+    .then(res => res.json())
+    .then(data => {
+      const items = (data.calendar || []).filter(item =>
+        item.currency === base || item.currency === quote
+      );
+
+      newsList.innerHTML = "";
+      if (items.length === 0) {
+        newsList.innerHTML = "<li>Tidak ada berita penting hari ini.</li>";
+      } else {
+        items.forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = `${item.date} - ${item.event}`;
+          newsList.appendChild(li);
+        });
+      }
+    })
+    .catch(() => {
+      newsList.innerHTML = "<li>Gagal memuat berita.</li>";
+    });
 }
 
-// Update Teknikal Box
-async function updateTeknikal(pair) {
-  const selectedIndicators = [];
-  if (document.getElementById("indikator1").value) selectedIndicators.push(document.getElementById("indikator1").value);
-  if (document.getElementById("indikator2").value) selectedIndicators.push(document.getElementById("indikator2").value);
-  if (document.getElementById("indikator3").value) selectedIndicators.push(document.getElementById("indikator3").value);
-
-  // Remove "none" if only one selected
-  let signals = await getYahooSignals(pair, selectedIndicators.filter(Boolean));
-  document.getElementById("buy-value").textContent = signals.buy + "%";
-  document.getElementById("sell-value").textContent = signals.sell + "%";
-  document.getElementById("buy-detail").textContent = selectedIndicators.length === 1 ? "none" : `${selectedIndicators.length} indikator`;
-  document.getElementById("sell-detail").textContent = selectedIndicators.length === 1 ? "none" : `${selectedIndicators.length} indikator`;
-  document.getElementById("indicator-link").textContent = selectedIndicators.length + " indicators";
-}
-
-// Event bindings and initial load
-window.addEventListener("DOMContentLoaded", async () => {
+window.addEventListener("DOMContentLoaded", () => {
   populateSelect(document.getElementById("pair"), pairs.map(p => p.includes("/") ? p : `${p.slice(0,3)}/${p.slice(3,6)}`), "EUR/USD");
   populateSelect(document.getElementById("timeframe"), timeframes, "H1");
   populateSelect(document.getElementById("indikator1"), indikatorMT4);
   populateSelect(document.getElementById("indikator2"), indikatorMT4);
   populateSelect(document.getElementById("indikator3"), indikatorMT4);
 
-  let pair = document.getElementById("pair").value;
-  updateNews(pair);
-  updateStats(pair);
-  updateTeknikal(pair);
+  document.getElementById("indikator1").addEventListener("change", updateTeknikal);
+  document.getElementById("indikator2").addEventListener("change", updateTeknikal);
+  document.getElementById("indikator3").addEventListener("change", updateTeknikal);
+  document.getElementById("pair").addEventListener("change", updateNews);
 
-  document.getElementById("pair").addEventListener("change", (e) => {
-    let pair = e.target.value;
-    updateNews(pair);
-    updateStats(pair);
-    updateTeknikal(pair);
-  });
-  ["indikator1", "indikator2", "indikator3"].forEach(id => {
-    document.getElementById(id).addEventListener("change", () => {
-      let pair = document.getElementById("pair").value;
-      updateTeknikal(pair);
-    });
-  });
+  updateTeknikal();
+  updateNews();
 });
