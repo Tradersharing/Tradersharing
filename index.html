@@ -8,6 +8,18 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+
+  <script>
+  document.getElementById("pair").addEventListener("change", () => {
+    updateNews();
+    updateSinyalMyfxbook(); // panggil sinyal baru
+  });
+
+  // Panggil saat halaman pertama kali dibuka
+  updateSinyalMyfxbook();
+</script>
+
+  
   <div class="header">
     <div class="logo">TraderSharing</div>
     <div class="notif-icon" id="notif-icon">🔔</div>
@@ -18,12 +30,8 @@
   </div>
 
   <!-- MYFXBOOK & TRADINGVIEW -->
-<div class="title-3d">Sinyal Myfxbook</div>
-  <div id="sinyal-box">Memuat sinyal...</div>
-  document.getElementById("pair").addEventListener("change", () => {
-  updateNews();
-  updateSinyalMyfxbook(); // panggil sinyal baru
-});
+
+  
   
   <div class="box">
     <div class="title-3d">Myfxbook</div>
@@ -34,7 +42,16 @@
     <div class="anomaly-output"><span class="label">Buy:</span> <span id="tradingview-buy">-</span></div>
     <div class="anomaly-output"><span class="label">Sell:</span> <span id="tradingview-sell">-</span></div>
   </div>
-      <button onclick="updateNews()" class="refresh-button">🔁 Refresh Berita</button>
+
+  <div class="box">
+  
+<div class="title-3d">Sinyal Myfxbook</div>
+  <div id="sinyal-box">Memuat sinyal...</div>
+<hr style="opacity:0.13;">
+        <button onclick="updateNews()" class="refresh-button">🔁 Refresh Berita</button>
+    </div>
+
+
     
 
   <!-- TEKNIKAL -->
