@@ -20,6 +20,10 @@
   <!-- MYFXBOOK & TRADINGVIEW -->
 <div class="title-3d">Sinyal Myfxbook</div>
   <div id="sinyal-box">Memuat sinyal...</div>
+  document.getElementById("pair").addEventListener("change", () => {
+  updateNews();
+  updateSinyalMyfxbook(); // panggil sinyal baru
+});
   
   <div class="box">
     <div class="title-3d">Myfxbook</div>
