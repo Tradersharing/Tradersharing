@@ -12,6 +12,52 @@ const indikatorMT4 = [
   "Parabolic SAR","Ichimoku Kinko Hyo","Envelopes","DeMarker"
 ];
 
+function updateSinyalMyfxbook() {
+  const session = "DSL07vu14QxHWErTIAFrH40"; // ganti kalau expired
+  const api = `https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`;
+  const proxy = "https://corsproxy.io/?";
+  const box = document.getElementById("sinyal-box");
+  const pair = document.getElementById("pair").value.replace("/", "");
+
+  fetch(proxy + api)
+    .then(res => res.json())
+    .then(data => {
+      const outlook = data.communityOutlook || [];
+      const info = outlook.find(item => item.name === pair);
+      if (!info) {
+        box.innerHTML = "Tidak ada data untuk pair ini.";
+        return;
+      }
+
+      const buy = parseFloat(info.longPercentage);
+      const sell = parseFloat(info.shortPercentage);
+      const entry = buy > sell ? parseFloat(info.avgLongPrice) : parseFloat(info.avgShortPrice);
+      const arah = buy > sell ? "BUY" : "SELL";
+      const icon = arah === "BUY" ? "📈" : "📉";
+
+      const tp1 = arah === "BUY" ? (entry + 0.0020) : (entry - 0.0020);
+      const tp2 = arah === "BUY" ? (entry + 0.0050) : (entry - 0.0050);
+      const tp3 = arah === "BUY" ? (entry + 0.1000) : (entry - 0.1000);
+      const sl1 = arah === "BUY" ? (entry - 0.0020) : (entry + 0.0020);
+
+      box.innerHTML = `
+        <b>➤ New Signal ${pair} : ${arah}</b> ${icon}<br>
+        <b>Entry:</b> ${entry.toFixed(5)}<br><br>
+        <b>Take Profit:</b><br>
+        TP1: ${tp1.toFixed(5)}<br>
+        TP2: ${tp2.toFixed(5)}<br>
+        TP3: ${tp3.toFixed(5)}<br><br>
+        <b>Stop Loss:</b><br>
+        SL1: ${sl1.toFixed(5)}<br>
+        SL2: 50 pips dari harga entry
+      `;
+    })
+    .catch(() => {
+      box.innerHTML = "Gagal ambil data Myfxbook (mungkin karena proxy).";
+    });
+}
+
+
 function populateSelect(selectElem, options, defaultVal=null) {
   selectElem.innerHTML = "";
   options.forEach(opt => {
