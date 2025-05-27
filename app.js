@@ -13,7 +13,7 @@ const indikatorMT4 = [
 ];
 
 function updateSinyalMyfxbook() {
-  const session = "DSL07vu14QxHWErTIAFrH40"; // ganti kalau expired
+  const session = "9UtvFTG9S31Z4vO1aDW31671626"; // ganti kalau expired
   const api = `https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`;
   const proxy = "https://corsproxy.io/?";
   const box = document.getElementById("sinyal-box");
