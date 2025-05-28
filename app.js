@@ -13,11 +13,14 @@ const indikatorMT4 = [
   "Parabolic SAR","Ichimoku Kinko Hyo","Envelopes","DeMarker"
 ];
 
-function scanMyfxbookSinyal() {
-  const session = "DSL07vu14QxHWErTIAFrH40";
-  const api = `https://www.myfxbook.com/api/get-community-outlook-by-symbol.json?session=${session}`;
-  const proxy = "https://api.allorigins.win/raw?url=";
-  const output = document.getElementById("signal-list");
+const session = "DSL07vu14QxHWErTIAFrH40";
+const api = `https://mhfcdncjwnuoshplmrxq.supabase.co/functions/v1/clever-action?token=${session}`;
+fetch(api)
+  .then(res => res.json())
+  .then(data => {
+    const outlook = data.symbols || [];
+    ...
+
 
   fetch(proxy + encodeURIComponent(api))
     .then(res => res.json())
