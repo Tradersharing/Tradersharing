@@ -12,18 +12,19 @@ const indikatorMT4 = [
   "Parabolic SAR","Ichimoku Kinko Hyo","Envelopes","DeMarker"
 ];
 
+
+
 function updateSinyalMyfxbook() {
   const session = "9UtvFTG9S31Z4vO1aDW31671626"; // ganti kalau expired
   const api = `https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`;
   const proxy = "https://api.allorigins.win/raw?url=";
   const box = document.getElementById("sinyal-box");
-  const pair = document.getElementById("pair").value.replace("/", "");
-
+  const pair = document.getElementById("pair").value.replace("/", "").toUpperCase();
   fetch(proxy + encodeURIComponent(api))
     .then(res => res.json())
     .then(data => {
       const outlook = data.communityOutlook || [];
-      const info = outlook.find(item => item.name === pair);
+      const info = outlook.find(item => item.name.toUpperCase() === pair);
       if (!info) {
         box.innerHTML = "Tidak ada data untuk pair ini.";
         return;
