@@ -22,6 +22,11 @@ function updateSinyalMyfxbook() {
 const proxy = "https://api.allorigins.win/raw?url=";
 fetch(proxy + encodeURIComponent(api))
 
+  window.addEventListener("DOMContentLoaded", () => {
+  updateNews();
+  updateSinyalMyfxbook();
+});
+
   
   fetch(proxy + api)
     .then(res => res.json())
