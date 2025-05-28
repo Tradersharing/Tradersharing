@@ -18,10 +18,13 @@ function scanMyfxbookSinyal() {
   const api = `https://corsproxy.io/?https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`;
   const output = document.getElementById("signal-list");
 
+
+
+  
   fetch(api)
     .then(res => res.json())
-    .then(data => {
-      const outlook = data.communityOutlook || [];
+.then(data => {
+  const outlook = data.symbols || data.communityOutlook || [];
       const valid = outlook.filter(p =>
         parseFloat(p.longPercentage) >= 70 || parseFloat(p.shortPercentage) >= 70
       );
@@ -88,6 +91,7 @@ function updateNews() {
   const proxy = "https://corsproxy.io/?";
   const api = "https://financialmodelingprep.com/api/v3/fx_calendar?apikey=G5P1iNxCJ5OQ68rUuNgqXytiGeb3LXD0";
 
+  
   fetch(proxy + api)
     .then(res => res.json())
     .then(data => {
