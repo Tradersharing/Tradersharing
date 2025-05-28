@@ -19,6 +19,10 @@ function updateSinyalMyfxbook() {
   const box = document.getElementById("sinyal-box");
   const pair = document.getElementById("pair").value.replace("/", "");
 
+const proxy = "https://api.allorigins.win/raw?url=";
+fetch(proxy + encodeURIComponent(api))
+
+  
   fetch(proxy + api)
     .then(res => res.json())
     .then(data => {
