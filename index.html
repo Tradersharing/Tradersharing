@@ -9,30 +9,17 @@
 </head>
 <body>
 
-  <script>
-  document.getElementById("pair").addEventListener("change", () => {
-    updateNews();
-    updateSinyalMyfxbook(); // panggil sinyal baru
-  });
-
-  // Panggil saat halaman pertama kali dibuka
-  updateSinyalMyfxbook();
-</script>
-
-  
   <div class="header">
     <div class="logo">TraderSharing</div>
     <div class="notif-icon" id="notif-icon">🔔</div>
   </div>
+
   <div class="pair-display">
     <label for="pair"><strong>Pilih Pair:</strong></label>
     <select id="pair" class="smooth-select"></select>
   </div>
 
   <!-- MYFXBOOK & TRADINGVIEW -->
-
-  
-  
   <div class="box">
     <div class="title-3d">Myfxbook</div>
     <div class="anomaly-output"><span class="label">Buy:</span> <span id="myfxbook-buy">-</span></div>
@@ -43,28 +30,34 @@
     <div class="anomaly-output"><span class="label">Sell:</span> <span id="tradingview-sell">-</span></div>
   </div>
 
+  <!-- SINYAL -->
   <div class="box">
-  
-<div class="title-3d">Sinyal Myfxbook</div>
-  <div id="sinyal-box">Memuat sinyal...</div>
-<hr style="opacity:0.13;">
-        <button onclick="updateNews()" class="refresh-button">🔁 Refresh Berita</button>
-    </div>
-
-
-    
+    <div class="title-3d">Sinyal Myfxbook</div>
+    <div id="sinyal-box">Memuat sinyal...</div>
+    <hr style="opacity:0.13;">
+    <button onclick="updateNews()" class="refresh-button">🔁 Refresh Berita</button>
+  </div>
 
   <!-- TEKNIKAL -->
   <div class="box">
     <div class="title-3d">Teknikal Price Action</div>
-  <div  <label for="timeframe">Timeframe:</label>
-    <select id="timeframe" class="smooth-select"></select>
-   <div <label for="indikator1">Indikator 1:</label>
-    <select id="indikator1" class="smooth-select"></select> </div>
-   <div <label for="indikator2">Indikator 2:</label>
-    <select id="indikator2" class="smooth-select"></select> </div>
-   <div <label for="indikator3">Indikator 3:</label>
-    <select id="indikator3" class="smooth-select"></select> </div>
+    <div>
+      <label for="timeframe">Timeframe:</label>
+      <select id="timeframe" class="smooth-select"></select>
+    </div>
+    <div>
+      <label for="indikator1">Indikator 1:</label>
+      <select id="indikator1" class="smooth-select"></select>
+    </div>
+    <div>
+      <label for="indikator2">Indikator 2:</label>
+      <select id="indikator2" class="smooth-select"></select>
+    </div>
+    <div>
+      <label for="indikator3">Indikator 3:</label>
+      <select id="indikator3" class="smooth-select"></select>
+    </div>
+
     <div id="teknikal-data" class="hasil-teknikal">
       <div class="action-boxes">
         <div class="action-box buy">
@@ -95,7 +88,20 @@
     </ul>
   </div>
 
-
+  <!-- PANGGIL JS -->
   <script src="app.js"></script>
+
+  <!-- JALANKAN JS SETELAH HTML DIBACA -->
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      updateSinyalMyfxbook();
+      updateNews();
+
+      document.getElementById("pair").addEventListener("change", () => {
+        updateNews();
+        updateSinyalMyfxbook();
+      });
+    });
+  </script>
 </body>
 </html>
