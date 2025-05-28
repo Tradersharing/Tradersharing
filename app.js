@@ -13,22 +13,39 @@ const indikatorMT4 = [
   "Parabolic SAR","Ichimoku Kinko Hyo","Envelopes","DeMarker"
 ];
 
-const session = "DSL07vu14QxHWErTIAFrH40";
-const api = `https://mhfcdncjwnuoshplmrxq.supabase.co/functions/v1/clever-action?token=${session}`;
+const session = "9UtvFTG9S31Z4vO1aDW31671626";
+const api = `https://corsproxy.io/?https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`;
+
 fetch(api)
   .then(res => res.json())
   .then(data => {
-    const outlook = data.symbols || [];
-    ...
+    const outlook = data.communityOutlook || [];
 
+    const valid = outlook.filter(p =>
+      parseFloat(p.longPercentage) >= 70 || parseFloat(p.shortPercentage) >= 70
+    );
 
-  fetch(proxy + encodeURIComponent(api))
-    .then(res => res.json())
-    .then(data => {
-      const outlook = data.symbols || [];
-      const valid = outlook.filter(p =>
-        parseFloat(p.longPercentage) >= 70 || parseFloat(p.shortPercentage) >= 70
-      );
+    const output = document.getElementById("signal-list");
+    output.innerHTML = "";
+
+    if (valid.length === 0) {
+      output.innerHTML = "<i>Belum ada sinyal saat ini.</i>";
+    } else {
+      valid.forEach(p => {
+        const buy = parseFloat(p.longPercentage).toFixed(1);
+        const sell = parseFloat(p.shortPercentage).toFixed(1);
+        const arah = buy >= 70 ? "BUY" : "SELL";
+        const icon = arah === "BUY" ? "📈" : "📉";
+
+        output.innerHTML += `<div><b>${p.name}</b> : ${arah} ${icon}<br>
+        Buy: ${buy}% / Sell: ${sell}%</div><hr style="opacity:0.1">`;
+      });
+    }
+  })
+  .catch(() => {
+    document.getElementById("signal-list").innerHTML = "<i>Gagal ambil data dari Myfxbook.</i>";
+  });
+
 
       output.innerHTML = "";
 
