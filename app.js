@@ -15,20 +15,11 @@ const indikatorMT4 = [
 function updateSinyalMyfxbook() {
   const session = "9UtvFTG9S31Z4vO1aDW31671626"; // ganti kalau expired
   const api = `https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`;
-  const proxy = "https://corsproxy.io/?";
+  const proxy = "https://api.allorigins.win/raw?url=";
   const box = document.getElementById("sinyal-box");
   const pair = document.getElementById("pair").value.replace("/", "");
 
-const proxy = "https://api.allorigins.win/raw?url=";
-fetch(proxy + encodeURIComponent(api))
-
-  window.addEventListener("DOMContentLoaded", () => {
-  updateNews();
-  updateSinyalMyfxbook();
-});
-
-  
-  fetch(proxy + api)
+  fetch(proxy + encodeURIComponent(api))
     .then(res => res.json())
     .then(data => {
       const outlook = data.communityOutlook || [];
@@ -62,10 +53,9 @@ fetch(proxy + encodeURIComponent(api))
       `;
     })
     .catch(() => {
-      box.innerHTML = "Gagal ambil data Myfxbook (mungkin karena proxy).";
+      box.innerHTML = "Gagal ambil data Myfxbook (mungkin karena proxy atau token expired).";
     });
 }
-
 
 function populateSelect(selectElem, options, defaultVal=null) {
   selectElem.innerHTML = "";
@@ -145,8 +135,13 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("indikator1").addEventListener("change", updateTeknikal);
   document.getElementById("indikator2").addEventListener("change", updateTeknikal);
   document.getElementById("indikator3").addEventListener("change", updateTeknikal);
-  document.getElementById("pair").addEventListener("change", updateNews);
+
+  document.getElementById("pair").addEventListener("change", () => {
+    updateNews();
+    updateSinyalMyfxbook();
+  });
 
   updateTeknikal();
   updateNews();
+  updateSinyalMyfxbook();
 });
