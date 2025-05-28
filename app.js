@@ -14,7 +14,7 @@ const indikatorMT4 = [
 ];
 
 function scanMyfxbookSinyal() {
-  const session = "9UtvFTG9S31Z4vO1aDW31671626";
+  const session = "DSL07vu14QxHWErTIAFrH40";
   const api = `https://www.myfxbook.com/api/get-community-outlook-by-symbol.json?session=${session}`;
   const proxy = "https://api.allorigins.win/raw?url=";
   const output = document.getElementById("signal-list");
