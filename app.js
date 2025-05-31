@@ -7,7 +7,7 @@ const PAIR_MAP = {
   'NZD/CAD': 'NZDCAD', 'USD/SGD': 'USDSGD', 'EUR/NZD': 'EURNZD', 'GBP/NZD': 'GBPNZD',
   'CAD/CHF': 'CADCHF'
 };
-
+const API_URL = "https://corsproxy.io/?https://www.myfxbook.com/api/get-community-outlook.json?session=9UtvFTG9S31Z4vO1aDW31671626";
 function renderKotakAnomali(data) {
   const pairSelected = document.getElementById("pair").value;
   const pairKey = PAIR_MAP[pairSelected] || pairSelected.replace("/", "");
