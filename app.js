@@ -1,4 +1,3 @@
-
 const PAIR_MAP = {
   'EUR/USD': 'EURUSD', 'USD/JPY': 'USDJPY', 'GBP/USD': 'GBPUSD', 'AUD/NZD': 'AUDNZD',
   'AUD/JPY': 'AUDJPY', 'EUR/JPY': 'EURJPY', 'NZD/USD': 'NZDUSD', 'USD/CHF': 'USDCHF',
@@ -9,59 +8,61 @@ const PAIR_MAP = {
   'CAD/CHF': 'CADCHF'
 };
 
-function scrapeMyfxbook() {
-  fetch('https://tradersharing.github.io/Tradersharing/index_V2.html')
-    .then(res => res.text())
-    .then(html => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const rows = Array.from(doc.querySelectorAll('table tr'));
+function renderKotakAnomali(data) {
+  const pairSelected = document.getElementById("pair").value;
+  const pairKey = PAIR_MAP[pairSelected] || pairSelected.replace("/", "");
+  const found = data.find(p => p.name === pairKey);
+  const anomaliOutput = document.getElementById("anomali-output");
 
-      const selectedPair = document.getElementById("pair").value;
-      const pairKey = PAIR_MAP[selectedPair] || selectedPair.replace('/', '');
+  if (found && found.signal) {
+    const tujuan = found.signal;
+    const anomali = (tujuan === "BUY") ? "SELL" : "BUY";
+    anomaliOutput.innerHTML = `
+      <div class="row-x"><span class="label-x">PAIR:</span> <span class="value-x">${pairSelected}</span></div>
+      <div class="row-x"><span class="label-x">Anomali:</span> <span class="value-x ${anomali === "BUY" ? "green" : "red"}">${anomali}</span></div>
+      <div class="row-x"><span class="label-x">Tujuan:</span> <span class="value-x ${tujuan === "BUY" ? "green" : "red"}">${tujuan}</span></div>
+      <div class="subsection-x">
+        <div class="sub-label-x">Sumber Data:</div>
+        <ul class="datasource-x">
+          <li>MyFXBook <span class="stats-x">buy ${found.buy}% sell ${found.sell}%</span></li>
+        </ul>
+      </div>
+    `;
+  } else {
+    anomaliOutput.innerHTML = "<i>Belum ada sinyal untuk pair ini.</i>";
+  }
+}
 
-      const results = rows.map(row => {
-        const tds = row.querySelectorAll('td');
-        if (tds.length < 3) return null;
-        const name = tds[0].innerText.trim();
-        const buy = parseFloat(tds[1].innerText);
-        const sell = parseFloat(tds[2].innerText);
-        return { name, buy, sell };
-      }).filter(Boolean);
+function renderKotakSinyalHariIni(data) {
+  const filtered = data.filter(p => (p.buy >= 70 || p.sell >= 70) && p.signal);
+  const output = filtered.map(p => 
+    `<div class="row-x">
+      <span class="label-x" style="min-width:60px;">${p.name}:</span>
+      <span class="value-x ${p.signal === "BUY" ? "green" : "red"}">${p.signal}</span>
+    </div>`
+  ).join('') || "<i>Tidak ada sinyal dengan kriteria (≥ 70%)</i>";
+  document.getElementById("signal-output").innerHTML = output;
+}
 
-      // === KOTAK SINYAL ===
-      const signalBox = document.getElementById("signal-output");
-      const valid = results.filter(p => p.buy >= 70 || p.sell >= 70);
-      signalBox.innerHTML = valid.length ? valid.map(p => {
-        const arah = p.buy >= 70 ? 'BUY 📈' : 'SELL 📉';
-        return `<b>${p.name}</b> : ${arah}<br>Buy: ${p.buy}% / Sell: ${p.sell}%<hr style="opacity:0.1">`;
-      }).join('') : "<i>Belum ada sinyal saat ini.</i>";
-
-      // === KOTAK ANOMALI ===
-      const match = results.find(p => p.name === pairKey);
-      const anomaliBox = document.getElementById("anomali-output");
-      if (match) {
-        const tujuan = match.buy > match.sell ? "SELL" : "BUY";
-        const anomali = match.buy > match.sell ? "BUY" : "SELL";
-        anomaliBox.innerHTML = `
-          Pair: <b>${match.name}</b><br>
-          Buy: ${match.buy}% / Sell: ${match.sell}%<br>
-          <b>Anomali:</b> ${anomali}<br>
-          <b>Tujuan:</b> ${tujuan}<br>
-          <small>Data dari Myfxbook</small>
-        `;
-      } else {
-        anomaliBox.innerHTML = "Pair tidak ditemukan di data.";
-      }
-
+function ambilDataMyfxbook() {
+  fetch("sinyal.json")
+    .then(res => res.json())
+    .then(data => {
+      renderKotakAnomali(data);
+      renderKotakSinyalHariIni(data);
     })
     .catch(err => {
-      document.getElementById("signal-output").innerText = "Gagal mengambil data.";
-      document.getElementById("anomali-output").innerText = "Gagal mengambil data.";
+      document.getElementById("signal-output").innerText = "Gagal ambil sinyal: " + err;
+      document.getElementById("anomali-output").innerText = "Gagal ambil anomali: " + err;
+      console.error(err);
     });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("pair").addEventListener("change", scrapeMyfxbook);
-  scrapeMyfxbook();
+  document.getElementById("pair").addEventListener("change", () => {
+    fetch("sinyal.json")
+      .then(res => res.json())
+      .then(data => renderKotakAnomali(data));
+  });
+  ambilDataMyfxbook();
 });
