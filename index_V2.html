@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Spin Grid Landing Page</title>
+  <title>Tradersharing Signal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      background-color: #000; /* hitam profesional */
+      background-color: #000; /* Hitam elegan */
       font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 20px;
@@ -14,55 +14,106 @@
     }
     h2 {
       text-align: center;
-      color: #FFD700; /* kuning emas dari gambar */
-      margin-bottom: 30px;
+      color: #FFD700; /* Kuning emas */
+      margin-bottom: 20px;
     }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 15px;
+      gap: 10px;
       max-width: 500px;
       margin: 0 auto;
     }
     .box {
-      background: #222; /* abu gelap elegan */
-      border: 2px solid #FFD700; /* kuning emas outline */
+      background: #222; /* Kotak abu gelap */
+      border: 2px solid #FFD700;
       border-radius: 10px;
-      padding: 15px;
+      padding: 10px;
       text-align: center;
-      color: #fff;
       box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
     }
-    .value {
-      font-size: 20px;
-      font-weight: bold;
-      color: #FF6347; /* merah ke oranye dari gambar */
-    }
-    .crown {
-      color: #FFD700;
+    .pair {
       font-size: 14px;
+      color: #FFD700; /* Pair warna emas */
+      font-weight: bold;
     }
-    .price {
+    .value {
       font-size: 12px;
-      color: #00FF00; /* hijau keterangan harga */
+      color: #FF6347; /* Merah oranye */
+    }
+    .signal {
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .buy {
+      color: #00FF00; /* Hijau buy */
+    }
+    .sell {
+      color: #FF4500; /* Merah sell */
+    }
+    .wait {
+      color: #999; /* Abu wait */
     }
   </style>
 </head>
 <body>
-  <h2>SPIN REWARDS</h2>
-  <div class="grid">
-    <div class="box"><div class="value">625</div><div class="crown">👑10</div></div>
-    <div class="box"><div class="value">550</div><div class="crown">👑7</div></div>
-    <div class="box"><div class="value">500</div><div class="price">$0.05</div></div>
-    <div class="box"><div class="value">300</div><div class="crown">👑3</div></div>
-    <div class="box"><div class="value">325</div><div class="crown">👑3</div></div>
-    <div class="box"><div class="value">350</div><div class="crown">👑4</div></div>
-    <div class="box"><div class="value">275</div><div class="crown">👑2</div></div>
-    <div class="box"><div class="value">250</div><div class="price">$0.05</div></div>
-    <div class="box"><div class="value">10</div><div class="crown">👑1</div></div>
-    <div class="box"><div class="value">1</div><div class="crown">👑1</div></div>
-    <div class="box"><div class="value">3</div><div class="crown">👑1</div></div>
-    <div class="box"><div class="value">5</div><div class="crown">👑1</div></div>
+  <h2>SPIN STYLE SIGNAL</h2>
+  <div class="grid" id="signals">
+    <!-- Data sinyal realtime muncul di sini -->
   </div>
+
+  <script>
+    const session = "9UtvFTG9S31Z4vO1aDW31671626"; // Ganti session kalau expired
+    const url = `https://api.allorigins.win/raw?url=https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`;
+
+    async function loadSignals() {
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.symbols || !Array.isArray(data.symbols)) {
+          document.getElementById('signals').innerHTML = "<div class='box'>Data tidak ditemukan.</div>";
+          return;
+        }
+
+        let content = '';
+        let totalSinyal = 0;
+
+        data.symbols.forEach(pair => {
+          let signalClass = 'wait';
+          let signalText = 'WAIT';
+
+          if (pair.longPercentage >= 70) {
+            signalClass = 'buy';
+            signalText = 'BUY';
+            totalSinyal++;
+          } else if (pair.shortPercentage >= 70) {
+            signalClass = 'sell';
+            signalText = 'SELL';
+            totalSinyal++;
+          }
+
+          content += `
+            <div class="box">
+              <div class="pair">${pair.name}</div>
+              <div class="value">Long: ${pair.longPercentage}% | Short: ${pair.shortPercentage}%</div>
+              <div class="signal ${signalClass}">${signalText}</div>
+            </div>
+          `;
+        });
+
+        if (totalSinyal === 0) {
+          content = "<div class='box wait'>Belum ada sinyal (≥70%)</div>";
+        }
+
+        document.getElementById('signals').innerHTML = content;
+      } catch (error) {
+        document.getElementById('signals').innerHTML = "<div class='box'>Gagal ambil data: " + error + "</div>";
+      }
+    }
+
+    loadSignals();
+    setInterval(loadSignals, 60000); // refresh tiap 1 menit
+  </script>
 </body>
 </html>
