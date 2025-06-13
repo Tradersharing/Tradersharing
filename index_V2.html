@@ -2,68 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tradersharing Signal</title>
+  <title>Spin Grid Landing Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; }
-    .signal { margin-bottom: 20px; }
-    .buy { color: green; font-weight: bold; }
-    .sell { color: red; font-weight: bold; }
-    .wait { color: gray; font-style: italic; }
+    body {
+      background-color: #000; /* hitam profesional */
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: #fff;
+    }
+    h2 {
+      text-align: center;
+      color: #FFD700; /* kuning emas dari gambar */
+      margin-bottom: 30px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 15px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .box {
+      background: #222; /* abu gelap elegan */
+      border: 2px solid #FFD700; /* kuning emas outline */
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+    .value {
+      font-size: 20px;
+      font-weight: bold;
+      color: #FF6347; /* merah ke oranye dari gambar */
+    }
+    .crown {
+      color: #FFD700;
+      font-size: 14px;
+    }
+    .price {
+      font-size: 12px;
+      color: #00FF00; /* hijau keterangan harga */
+    }
   </style>
 </head>
 <body>
-  <h2>Forex Signal Otomatis (Myfxbook)</h2>
-  <div id="signals"></div>
-  <script>
-    const session ="9UtvFTG9S31Z4vO1aDW31671626";
-    const url = `https://api.allorigins.win/raw?url=https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`;
-
-    async function cariSinyal() {
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (!data.symbols || !Array.isArray(data.symbols)) {
-          document.getElementById('signals').innerText = "Data tidak ditemukan.";
-          return;
-        }
-
-        let hasil = '';
-        let totalSinyal = 0;
-
-        data.symbols.forEach(pair => {
-          let signalText = '';
-          if (pair.longPercentage >= 70) {
-            signalText = `<span class="buy">BUY (long)</span>`;
-            totalSinyal++;
-          } else if (pair.shortPercentage >= 70) {
-            signalText = `<span class="sell">SELL (short)</span>`;
-            totalSinyal++;
-          } else {
-            signalText = `<span class="wait">Tidak ada sinyal (wait)</span>`;
-          }
-          hasil += `<div class="signal">
-            <b>${pair.name}</b> <br>
-            Long: ${pair.longPercentage}% &nbsp; | &nbsp; Short: ${pair.shortPercentage}%<br>
-            Sinyal: ${signalText}
-          </div>`;
-        });
-
-        if (totalSinyal === 0) {
-          hasil = "<div class='wait'>Belum ada pair yang memenuhi kriteria sinyal (long/short ≥ 70%)</div>";
-        }
-
-        document.getElementById('signals').innerHTML = hasil;
-      } catch (e) {
-        document.getElementById('signals').innerText = "Gagal mengambil data: " + e;
-      }
-    }
-
-    // Jalankan otomatis saat halaman dibuka
-    cariSinyal();
-
-    // Untuk auto-refresh setiap 1 menit:
-    setInterval(cariSinyal, 60000);
-  </script>
+  <h2>SPIN REWARDS</h2>
+  <div class="grid">
+    <div class="box"><div class="value">625</div><div class="crown">👑10</div></div>
+    <div class="box"><div class="value">550</div><div class="crown">👑7</div></div>
+    <div class="box"><div class="value">500</div><div class="price">$0.05</div></div>
+    <div class="box"><div class="value">300</div><div class="crown">👑3</div></div>
+    <div class="box"><div class="value">325</div><div class="crown">👑3</div></div>
+    <div class="box"><div class="value">350</div><div class="crown">👑4</div></div>
+    <div class="box"><div class="value">275</div><div class="crown">👑2</div></div>
+    <div class="box"><div class="value">250</div><div class="price">$0.05</div></div>
+    <div class="box"><div class="value">10</div><div class="crown">👑1</div></div>
+    <div class="box"><div class="value">1</div><div class="crown">👑1</div></div>
+    <div class="box"><div class="value">3</div><div class="crown">👑1</div></div>
+    <div class="box"><div class="value">5</div><div class="crown">👑1</div></div>
+  </div>
 </body>
 </html>
