@@ -4,51 +4,61 @@
   <meta charset="UTF-8">
   <title>Tradersharing</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="tradersharing_icon.png">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" href="tradersharing_icon.png" type="image/png">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #000;
+      background: #000;
       color: #fff;
       overflow-x: hidden;
     }
     header {
-      background: linear-gradient(to right, #0044cc, #cc0000);
+      background: #000044;
+      color: #fff;
       padding: 15px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    header .title {
+    .title {
       font-weight: bold;
       font-size: 20px;
     }
-    .title span.blue { color: #00f; }
-    .title span.red { color: red; }
-    header .subtitle {
+    .title span.blue {
+      color: #00bfff;
+      text-shadow: 0 0 3px #000;
+    }
+    .title span.red {
+      color: #ff3030;
+    }
+    .subtitle {
       font-size: 12px;
-      color: #eee;
+      color: #aaa;
     }
     .burger {
       font-size: 24px;
       cursor: pointer;
       z-index: 11;
-      color: #fff;
     }
     .sidebar {
       position: fixed;
       top: 0;
       left: -100%;
-      width: 60%;
+      width: 50%;
       height: 100%;
       background: #111;
       padding: 20px;
       transition: left 0.3s ease;
       z-index: 10;
     }
-    .sidebar.active { left: 0; }
+    .sidebar.active {
+      left: 0;
+    }
     .sidebar a {
       display: block;
       color: #FFD700;
@@ -57,54 +67,65 @@
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 15px;
-      padding: 0 15px;
+      padding: 20px;
     }
     .box {
-      background: linear-gradient(145deg, #1a1a1a, #000);
+      background: linear-gradient(145deg, #1c1c1c, #000);
       border-radius: 15px;
-      padding: 15px;
-      box-shadow: inset -2px -2px 5px #111, inset 2px 2px 5px #222;
+      padding: 20px 10px;
+      box-shadow: 4px 4px 10px #111, -4px -4px 10px #222;
       text-align: center;
+      transition: all 0.3s ease;
+    }
+    .box:hover {
+      box-shadow: 0 0 20px #FFD700;
     }
     .pair {
-      color: #FFD700;
       font-weight: bold;
       font-size: 16px;
-      margin-bottom: 10px;
+      color: #FFD700;
     }
     .value {
-      color: #FF6347;
+      margin-top: 10px;
       font-size: 13px;
     }
     .signal {
+      margin-top: 8px;
       font-weight: bold;
       font-size: 14px;
-      margin-top: 5px;
     }
-    .buy { color: #00FF00; }
-    .sell { color: #FF4500; }
-    .wait { color: #999; }
-    canvas { width: 100%; height: 100px; }
+    .buy {
+      color: #00ff00;
+    }
+    .sell {
+      color: #ff4444;
+    }
+    .wait {
+      color: #999;
+    }
+    svg {
+      width: 100%;
+      height: 100px;
+    }
     #modal {
-      display:none;
-      position:fixed;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
-      background:rgba(0,0,0,0.8);
-      z-index:100;
-      justify-content:center;
-      align-items:center;
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
     }
     #modal-content {
-      background:#111;
-      padding:20px;
-      border-radius:10px;
-      max-width:300px;
-      margin: auto;
+      background: #111;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 300px;
       color: #fff;
       box-shadow: 0 0 10px #FFD700;
     }
@@ -113,33 +134,42 @@
 <body>
   <header>
     <div>
-      <div class="title">
-        <span class="blue">Trader</span><span class="red">Sharing</span>
-      </div>
+      <div class="title"><span class="blue">Trader</span><span class="red">Sharing</span></div>
       <div class="subtitle">The Profesional Sinyal Forex</div>
     </div>
-    <div class="burger" onclick="toggleSidebar()">&#9776;</div>
+    <div class="burger" onclick="toggleSidebar()">☰</div>
   </header>
 
   <div class="sidebar" id="sidebar">
     <a href="#">📡 View Signal Now</a>
   </div>
 
-  <div class="grid" id="signals">
-    <!-- Data akan dimuat di sini -->
-  </div>
+  <div class="grid" id="signals"></div>
 
   <div id="modal">
-    <div id="modal-content">
-      <!-- Isi akan diisi via JS -->
-    </div>
-    <div onclick="closeModal()" style="position: absolute; top:10px; right:20px; font-size: 28px; color: #fff; cursor:pointer;">&times;</div>
+    <div id="modal-content"></div>
+    <div onclick="closeModal()" style="position:absolute; top:10px; right:20px; font-size: 28px; color: #fff; cursor:pointer">&times;</div>
   </div>
 
   <script>
     function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('active');
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+
+    function drawGauge(buy, sell) {
+      const angleBuy = (buy / 100) * 180 - 90;
+      const angleSell = (sell / 100) * 180 - 90;
+      return `
+        <svg viewBox="0 0 200 100">
+          <path d="M10,100 A90,90 0 0,1 190,100" stroke="#333" stroke-width="15" fill="none" />
+          <line x1="100" y1="100" x2="${100 + 80 * Math.cos(angleBuy * Math.PI / 180)}" y2="${100 + 80 * Math.sin(angleBuy * Math.PI / 180)}" stroke="#00FF00" stroke-width="4" />
+          <line x1="100" y1="100" x2="${100 + 60 * Math.cos(angleSell * Math.PI / 180)}" y2="${100 + 60 * Math.sin(angleSell * Math.PI / 180)}" stroke="#FF0000" stroke-width="3" />
+          <circle cx="100" cy="100" r="4" fill="#fff" />
+        </svg>`;
     }
 
     const url = "https://api.allorigins.win/raw?url=https://www.myfxbook.com/api/get-community-outlook.json?session=9UtvFTG9S31Z4vO1aDW31671626";
@@ -148,64 +178,25 @@
       try {
         const res = await fetch(url);
         const data = await res.json();
+        const signals = document.getElementById("signals");
 
-        if (!data.symbols || !Array.isArray(data.symbols)) {
-          document.getElementById('signals').innerHTML = "<div class='box wait'>Data tidak ditemukan.</div>";
-          return;
-        }
+        signals.innerHTML = data.symbols.map((pair, index) => {
+          let signal = 'WAIT';
+          let cls = 'wait';
+          if (pair.longPercentage >= 70) { signal = 'BUY'; cls = 'buy'; }
+          else if (pair.shortPercentage >= 70) { signal = 'SELL'; cls = 'sell'; }
 
-        let content = '';
-        let totalSinyal = 0;
-
-        data.symbols.forEach((pair, index) => {
-          let signalClass = 'wait';
-          let signalText = 'WAIT';
-
-          if (pair.longPercentage >= 70) {
-            signalClass = 'buy'; signalText = 'BUY'; totalSinyal++;
-          } else if (pair.shortPercentage >= 70) {
-            signalClass = 'sell'; signalText = 'SELL'; totalSinyal++;
-          }
-
-          content += `
+          return `
             <div class="box" onclick="showDetail('${pair.name}', ${pair.longPercentage}, ${pair.shortPercentage}, '${pair.volume || 'N/A'}')">
               <div class="pair">${pair.name}</div>
-              <canvas id="gauge${index}"></canvas>
+              ${drawGauge(pair.longPercentage, pair.shortPercentage)}
               <div class="value">Buy: ${pair.longPercentage}% | Sell: ${pair.shortPercentage}%</div>
-              <div class="signal ${signalClass}">${signalText}</div>
-            </div>
-          `;
-        });
+              <div class="signal ${cls}">${signal}</div>
+            </div>`;
+        }).join("");
 
-        if (totalSinyal === 0) {
-          content = "<div class='box wait'>Belum ada sinyal (≥70%)</div>";
-        }
-
-        document.getElementById('signals').innerHTML = content;
-
-        data.symbols.forEach((pair, index) => {
-          const ctx = document.getElementById(`gauge${index}`).getContext('2d');
-          new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-              labels: ['Buy', 'Sell', 'Empty'],
-              datasets: [{
-                data: [pair.longPercentage, pair.shortPercentage, 100 - (pair.longPercentage + pair.shortPercentage)],
-                backgroundColor: ['#00FF00', '#FF4500', '#222'],
-                borderWidth: 0
-              }]
-            },
-            options: {
-              rotation: -Math.PI,
-              circumference: Math.PI,
-              cutout: '60%',
-              plugins: { legend: { display: false } },
-              animation: false,
-            }
-          });
-        });
-      } catch (error) {
-        document.getElementById('signals').innerHTML = "<div class='box wait'>Gagal ambil data: " + error + "</div>";
+      } catch (e) {
+        document.getElementById("signals").innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
       }
     }
 
@@ -221,13 +212,8 @@
         <p><strong>📌 Berita Forex:</strong></p>
         <ul>
           <li><a href="https://www.forexfactory.com/news" target="_blank">Lihat berita di ForexFactory.com</a></li>
-        </ul>
-      `;
+        </ul>`;
       modal.style.display = 'flex';
-    }
-
-    function closeModal() {
-      document.getElementById('modal').style.display = 'none';
     }
 
     loadSignals();
