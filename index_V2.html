@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Tradersharing</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="tradersharing_icon.png">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -14,30 +15,45 @@
       overflow-x: hidden;
     }
     header {
-      background-color: #000;
-      color: #FFD700;
+      background: linear-gradient(to right, #0044cc, #cc0000);
       padding: 15px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    header .subtitle { font-size: 12px; color: #ccc; }
+    header .title {
+      font-weight: bold;
+      font-size: 20px;
+    }
+    .title span.blue { color: #00f; }
+    .title span.red { color: red; }
+    header .subtitle {
+      font-size: 12px;
+      color: #eee;
+    }
     .burger {
-      font-size: 24px; cursor: pointer; z-index: 11;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 11;
+      color: #fff;
     }
     .sidebar {
-      position: fixed; top: 0; left: -100%; width: 60%;
-      height: 100%; background: #111;
-      padding: 20px; transition: left 0.3s ease; z-index: 10;
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: #111;
+      padding: 20px;
+      transition: left 0.3s ease;
+      z-index: 10;
     }
     .sidebar.active { left: 0; }
     .sidebar a {
-      display: block; color: #FFD700; text-decoration: none;
+      display: block;
+      color: #FFD700;
+      text-decoration: none;
       margin-bottom: 15px;
-    }
-    h2 {
-      text-align: center; color: #FFD700;
-      margin: 20px 0 10px;
     }
     .grid {
       display: grid;
@@ -52,47 +68,67 @@
       box-shadow: inset -2px -2px 5px #111, inset 2px 2px 5px #222;
       text-align: center;
     }
-    .pair { color: #FFD700; font-weight: bold; font-size: 16px; margin-bottom: 10px; }
-    .value { color: #FF6347; font-size: 13px; }
-    .signal { font-weight: bold; font-size: 14px; margin-top: 5px; }
+    .pair {
+      color: #FFD700;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .value {
+      color: #FF6347;
+      font-size: 13px;
+    }
+    .signal {
+      font-weight: bold;
+      font-size: 14px;
+      margin-top: 5px;
+    }
     .buy { color: #00FF00; }
     .sell { color: #FF4500; }
     .wait { color: #999; }
     canvas { width: 100%; height: 100px; }
-
-    /* Modal */
     #modal {
-      display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,0.8); z-index:100;
-      justify-content:center; align-items:center;
+      display:none;
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.8);
+      z-index:100;
+      justify-content:center;
+      align-items:center;
     }
     #modal-content {
-      background:#111; padding:20px; border-radius:10px; max-width:300px;
-      margin: auto; color: #fff; box-shadow: 0 0 10px #FFD700;
+      background:#111;
+      padding:20px;
+      border-radius:10px;
+      max-width:300px;
+      margin: auto;
+      color: #fff;
+      box-shadow: 0 0 10px #FFD700;
     }
   </style>
 </head>
 <body>
   <header>
     <div>
-      <div style="font-weight: bold; font-size: 20px; color: #FFD700;">Trader<span style="color:red;">Sharing</span></div>
+      <div class="title">
+        <span class="blue">Trader</span><span class="red">Sharing</span>
+      </div>
       <div class="subtitle">The Profesional Sinyal Forex</div>
     </div>
     <div class="burger" onclick="toggleSidebar()">&#9776;</div>
   </header>
 
   <div class="sidebar" id="sidebar">
-    <a href="#">Menu 1</a>
-    <a href="#">Menu 2</a>
-    <a href="#">Menu 3</a>
+    <a href="#">📡 View Signal Now</a>
   </div>
 
-  <h2>SPIN STYLE SIGNAL</h2>
   <div class="grid" id="signals">
     <!-- Data akan dimuat di sini -->
   </div>
 
-  <!-- Modal untuk detail pair -->
   <div id="modal">
     <div id="modal-content">
       <!-- Isi akan diisi via JS -->
@@ -106,9 +142,7 @@
       sidebar.classList.toggle('active');
     }
 
-    // GANTI URL BERIKUT DENGAN PUNYAMU DI CLOUDFLARE
-    const session = "9UtvFTG9S31Z4vO1aDW31671626";
-    const url = `https://yourproxyname.workers.dev/?url=https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`;
+    const url = "https://api.allorigins.win/raw?url=https://www.myfxbook.com/api/get-community-outlook.json?session=9UtvFTG9S31Z4vO1aDW31671626";
 
     async function loadSignals() {
       try {
@@ -186,7 +220,7 @@
         <hr style='border-color:#333'/>
         <p><strong>📌 Berita Forex:</strong></p>
         <ul>
-          <li><a href=\"https://www.forexfactory.com/news\" target=\"_blank\">Lihat berita di ForexFactory.com</a></li>
+          <li><a href="https://www.forexfactory.com/news" target="_blank">Lihat berita di ForexFactory.com</a></li>
         </ul>
       `;
       modal.style.display = 'flex';
