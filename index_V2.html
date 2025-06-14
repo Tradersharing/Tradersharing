@@ -102,6 +102,12 @@
       color: #fff;
       box-shadow: 0 0 10px #FFD700;
     }
+    #lastUpdate {
+      text-align: center;
+      color: #888;
+      font-size: 11px;
+      margin-bottom: -10px;
+    }
   </style>
 </head>
 <body>
@@ -117,6 +123,7 @@
     <a href="#">📡 View Signal Now</a>
   </div>
 
+  <div id="lastUpdate"></div>
   <div class="grid" id="signals"></div>
 
   <div id="modal">
@@ -153,18 +160,11 @@
               <animate attributeName="scale" values="1;0.5;1" dur="0.5s" repeatCount="indefinite" />
             </filter>
           </defs>
-          <!-- Dua setengah lingkaran -->
           <path d="M10,100 A90,90 0 0,1 100,10" stroke="#333" stroke-width="6" fill="none"/>
           <path d="M100,10 A90,90 0 0,1 190,100" stroke="#333" stroke-width="6" fill="none"/>
-
-          <!-- Jarum Buy -->
           <line x1="100" y1="100" x2="${bx}" y2="${by}" stroke="#0f0" stroke-width="3" filter="url(#vibrate)" />
-          <!-- Jarum Sell -->
           <line x1="100" y1="100" x2="${sx}" y2="${sy}" stroke="#f00" stroke-width="3" filter="url(#vibrate)" />
-
           <circle cx="100" cy="100" r="3" fill="#fff" />
-
-          <!-- Label bawah -->
           <text x="5" y="115" font-size="10" fill="#0f0">BUY 0</text>
           <text x="80" y="115" font-size="10" fill="#0f0">50</text>
           <text x="96" y="115" font-size="10" fill="#fff">|</text>
@@ -177,12 +177,15 @@
     const url = "https://api.allorigins.win/raw?url=https://www.myfxbook.com/api/get-community-outlook.json?session=9UtvFTG9S31Z4vO1aDW31671626";
 
     async function loadSignals() {
+      const signals = document.getElementById("signals");
+      signals.innerHTML = '<div class="box wait">🔄 Memuat data...</div>';
+
       try {
         const res = await fetch(url);
         const data = await res.json();
-        const signals = document.getElementById("signals");
+        const sorted = data.symbols.sort((a, b) => Math.max(b.longPercentage, b.shortPercentage) - Math.max(a.longPercentage, a.shortPercentage));
 
-        signals.innerHTML = data.symbols.map((pair) => {
+        signals.innerHTML = sorted.map((pair) => {
           let signal = 'WAIT';
           let cls = 'wait';
           if (pair.longPercentage >= 70) { signal = 'BUY'; cls = 'buy'; }
@@ -197,8 +200,10 @@
             </div>`;
         }).join("");
 
+        document.getElementById("lastUpdate").textContent = `⏱ Update: ${new Date().toLocaleTimeString()}`;
+
       } catch (e) {
-        document.getElementById("signals").innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
+        signals.innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
       }
     }
 
