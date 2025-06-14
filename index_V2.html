@@ -185,9 +185,17 @@
         const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
         const data = await res.json();
 
-        const sorted = data.symbols
-          .filter(pair => /^[A-Z]{6}$/.test(pair.name) || pair.name.toUpperCase().includes("XAU") || pair.name.toUpperCase().includes("US30") || pair.name.toUpperCase().includes("BTC"))
-          .sort((a, b) => Math.max(b.longPercentage, b.shortPercentage) - Math.max(a.longPercentage, a.shortPercentage));
+        const allPairs = data.symbols;
+
+        const isForex = name => /^[A-Z]{6}$/.test(name);
+        const isMajor = name => ["EURUSD","GBPUSD","USDJPY","USDCHF","AUDUSD","NZDUSD","USDCAD"].includes(name);
+        const isGoldIndex = name => name.includes("XAU") || name.includes("US30") || name.includes("BTC");
+
+        const sorted = [
+          ...allPairs.filter(p => isForex(p.name) && !isMajor(p.name)), // minor
+          ...allPairs.filter(p => isForex(p.name) && isMajor(p.name)),  // major
+          ...allPairs.filter(p => isGoldIndex(p.name))                  // xau/us30/btc
+        ];
 
         signals.innerHTML = sorted.map((pair) => {
           const buy = parseFloat(pair.longPercentage) || 0;
