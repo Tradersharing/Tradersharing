@@ -2,69 +2,113 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tradersharing Signal</title>
+  <title>Tradersharing</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background-color: #000; /* Hitam elegan */
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 20px;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #000;
       color: #fff;
+      overflow-x: hidden;
+    }
+    header {
+      background-color: #000;
+      color: #FFD700;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header .subtitle { font-size: 12px; color: #ccc; }
+    .burger {
+      font-size: 24px; cursor: pointer; z-index: 11;
+    }
+    .sidebar {
+      position: fixed; top: 0; left: -100%; width: 60%;
+      height: 100%; background: #111;
+      padding: 20px; transition: left 0.3s ease; z-index: 10;
+    }
+    .sidebar.active { left: 0; }
+    .sidebar a {
+      display: block; color: #FFD700; text-decoration: none;
+      margin-bottom: 15px;
     }
     h2 {
-      text-align: center;
-      color: #FFD700; /* Kuning emas */
-      margin-bottom: 20px;
+      text-align: center; color: #FFD700;
+      margin: 20px 0 10px;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 10px;
-      max-width: 500px;
-      margin: 0 auto;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 15px;
+      padding: 0 15px;
     }
     .box {
-      background: #222; /* Kotak abu gelap */
-      border: 2px solid #FFD700;
-      border-radius: 10px;
-      padding: 10px;
+      background: linear-gradient(145deg, #1a1a1a, #000);
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: inset -2px -2px 5px #111, inset 2px 2px 5px #222;
       text-align: center;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
     }
-    .pair {
-      font-size: 14px;
-      color: #FFD700; /* Pair warna emas */
-      font-weight: bold;
+    .pair { color: #FFD700; font-weight: bold; font-size: 16px; margin-bottom: 10px; }
+    .value { color: #FF6347; font-size: 13px; }
+    .signal { font-weight: bold; font-size: 14px; margin-top: 5px; }
+    .buy { color: #00FF00; }
+    .sell { color: #FF4500; }
+    .wait { color: #999; }
+    canvas { width: 100%; height: 100px; }
+
+    /* Modal */
+    #modal {
+      display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.8); z-index:100;
+      justify-content:center; align-items:center;
     }
-    .value {
-      font-size: 12px;
-      color: #FF6347; /* Merah oranye */
-    }
-    .signal {
-      font-size: 13px;
-      font-weight: bold;
-    }
-    .buy {
-      color: #00FF00; /* Hijau buy */
-    }
-    .sell {
-      color: #FF4500; /* Merah sell */
-    }
-    .wait {
-      color: #999; /* Abu wait */
+    #modal-content {
+      background:#111; padding:20px; border-radius:10px; max-width:300px;
+      margin: auto; color: #fff; box-shadow: 0 0 10px #FFD700;
     }
   </style>
 </head>
 <body>
+  <header>
+    <div>
+      <div style="font-weight: bold; font-size: 20px; color: #FFD700;">Trader<span style="color:red;">Sharing</span></div>
+      <div class="subtitle">The Profesional Sinyal Forex</div>
+    </div>
+    <div class="burger" onclick="toggleSidebar()">&#9776;</div>
+  </header>
+
+  <div class="sidebar" id="sidebar">
+    <a href="#">Menu 1</a>
+    <a href="#">Menu 2</a>
+    <a href="#">Menu 3</a>
+  </div>
+
   <h2>SPIN STYLE SIGNAL</h2>
   <div class="grid" id="signals">
-    <!-- Data sinyal realtime muncul di sini -->
+    <!-- Data akan dimuat di sini -->
+  </div>
+
+  <!-- Modal untuk detail pair -->
+  <div id="modal">
+    <div id="modal-content">
+      <!-- Isi akan diisi via JS -->
+    </div>
+    <div onclick="closeModal()" style="position: absolute; top:10px; right:20px; font-size: 28px; color: #fff; cursor:pointer;">&times;</div>
   </div>
 
   <script>
-    const session = "9UtvFTG9S31Z4vO1aDW31671626"; // Ganti session kalau expired
-    const url = `https://api.allorigins.win/raw?url=https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`;
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('active');
+    }
+
+    // GANTI URL BERIKUT DENGAN PUNYAMU DI CLOUDFLARE
+    const session = "9UtvFTG9S31Z4vO1aDW31671626";
+    const url = `https://yourproxyname.workers.dev/?url=https://www.myfxbook.com/api/get-community-outlook.json?session=${session}`;
 
     async function loadSignals() {
       try {
@@ -72,31 +116,28 @@
         const data = await res.json();
 
         if (!data.symbols || !Array.isArray(data.symbols)) {
-          document.getElementById('signals').innerHTML = "<div class='box'>Data tidak ditemukan.</div>";
+          document.getElementById('signals').innerHTML = "<div class='box wait'>Data tidak ditemukan.</div>";
           return;
         }
 
         let content = '';
         let totalSinyal = 0;
 
-        data.symbols.forEach(pair => {
+        data.symbols.forEach((pair, index) => {
           let signalClass = 'wait';
           let signalText = 'WAIT';
 
           if (pair.longPercentage >= 70) {
-            signalClass = 'buy';
-            signalText = 'BUY';
-            totalSinyal++;
+            signalClass = 'buy'; signalText = 'BUY'; totalSinyal++;
           } else if (pair.shortPercentage >= 70) {
-            signalClass = 'sell';
-            signalText = 'SELL';
-            totalSinyal++;
+            signalClass = 'sell'; signalText = 'SELL'; totalSinyal++;
           }
 
           content += `
-            <div class="box">
+            <div class="box" onclick="showDetail('${pair.name}', ${pair.longPercentage}, ${pair.shortPercentage}, '${pair.volume || 'N/A'}')">
               <div class="pair">${pair.name}</div>
-              <div class="value">Long: ${pair.longPercentage}% | Short: ${pair.shortPercentage}%</div>
+              <canvas id="gauge${index}"></canvas>
+              <div class="value">Buy: ${pair.longPercentage}% | Sell: ${pair.shortPercentage}%</div>
               <div class="signal ${signalClass}">${signalText}</div>
             </div>
           `;
@@ -107,13 +148,56 @@
         }
 
         document.getElementById('signals').innerHTML = content;
+
+        data.symbols.forEach((pair, index) => {
+          const ctx = document.getElementById(`gauge${index}`).getContext('2d');
+          new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: ['Buy', 'Sell', 'Empty'],
+              datasets: [{
+                data: [pair.longPercentage, pair.shortPercentage, 100 - (pair.longPercentage + pair.shortPercentage)],
+                backgroundColor: ['#00FF00', '#FF4500', '#222'],
+                borderWidth: 0
+              }]
+            },
+            options: {
+              rotation: -Math.PI,
+              circumference: Math.PI,
+              cutout: '60%',
+              plugins: { legend: { display: false } },
+              animation: false,
+            }
+          });
+        });
       } catch (error) {
-        document.getElementById('signals').innerHTML = "<div class='box'>Gagal ambil data: " + error + "</div>";
+        document.getElementById('signals').innerHTML = "<div class='box wait'>Gagal ambil data: " + error + "</div>";
       }
     }
 
+    function showDetail(name, buy, sell, volume) {
+      const modal = document.getElementById('modal');
+      const modalContent = document.getElementById('modal-content');
+      modalContent.innerHTML = `
+        <h3>${name}</h3>
+        <p>Buy: <span style='color:#0f0'>${buy}%</span></p>
+        <p>Sell: <span style='color:#f00'>${sell}%</span></p>
+        <p>Volume: ${volume}</p>
+        <hr style='border-color:#333'/>
+        <p><strong>📌 Berita Forex:</strong></p>
+        <ul>
+          <li><a href=\"https://www.forexfactory.com/news\" target=\"_blank\">Lihat berita di ForexFactory.com</a></li>
+        </ul>
+      `;
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+
     loadSignals();
-    setInterval(loadSignals, 60000); // refresh tiap 1 menit
+    setInterval(loadSignals, 60000);
   </script>
 </body>
 </html>
