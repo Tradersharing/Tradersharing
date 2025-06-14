@@ -81,7 +81,7 @@
     .buy { color: #00ff00; }
     .sell { color: #ff4444; }
     .wait { color: #999; }
-    svg { width: 100%; height: 100px; }
+    svg { width: 100%; height: 120px; }
     #modal {
       display: none;
       position: fixed;
@@ -128,34 +128,50 @@
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('active');
     }
-
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
     }
 
-    function drawGauge(buy) {
-      const angle = (buy / 100) * 180 - 90;
-      const rad = angle * Math.PI / 180;
-      const x = 100 + 60 * Math.cos(rad);
-      const y = 100 + 60 * Math.sin(rad);
+    function drawDualGauge(buy, sell) {
+      const toAngle = (val, reverse = false) => {
+        const angle = (val / 100) * 90;
+        return reverse ? 90 - angle : -90 + angle;
+      };
+      const angleBuy = toAngle(buy);
+      const angleSell = toAngle(sell, true);
+      const bx = 100 + 60 * Math.cos(angleBuy * Math.PI / 180);
+      const by = 100 + 60 * Math.sin(angleBuy * Math.PI / 180);
+      const sx = 100 + 60 * Math.cos(angleSell * Math.PI / 180);
+      const sy = 100 + 60 * Math.sin(angleSell * Math.PI / 180);
 
       return `
         <svg viewBox="0 0 200 120">
           <defs>
             <filter id="vibrate">
-              <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="1" result="noise"/>
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.5"/>
-              <animate attributeName="scale" values="0.5;1;0.5" dur="1s" repeatCount="indefinite" />
+              <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="1" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1" />
+              <animate attributeName="scale" values="1;0.5;1" dur="0.5s" repeatCount="indefinite" />
             </filter>
           </defs>
-          <path d="M10,100 A90,90 0 0,1 190,100" stroke="#444" stroke-width="8" fill="none"/>
-          <line x1="100" y1="100" x2="${x}" y2="${y}"
-            stroke="#FFD700" stroke-width="3" stroke-linecap="round" filter="url(#vibrate)" />
-          <circle cx="100" cy="100" r="4" fill="#fff" />
-          <text x="10" y="115" font-size="10" fill="#999">0</text>
-          <text x="95" y="115" font-size="10" fill="#ccc">50</text>
-          <text x="175" y="115" font-size="10" fill="#999">100</text>
-        </svg>`;
+          <!-- Dua setengah lingkaran -->
+          <path d="M10,100 A90,90 0 0,1 100,10" stroke="#333" stroke-width="6" fill="none"/>
+          <path d="M100,10 A90,90 0 0,1 190,100" stroke="#333" stroke-width="6" fill="none"/>
+
+          <!-- Jarum Buy -->
+          <line x1="100" y1="100" x2="${bx}" y2="${by}" stroke="#0f0" stroke-width="3" filter="url(#vibrate)" />
+          <!-- Jarum Sell -->
+          <line x1="100" y1="100" x2="${sx}" y2="${sy}" stroke="#f00" stroke-width="3" filter="url(#vibrate)" />
+
+          <circle cx="100" cy="100" r="3" fill="#fff" />
+
+          <!-- Label bawah -->
+          <text x="5" y="115" font-size="10" fill="#0f0">BUY 0</text>
+          <text x="80" y="115" font-size="10" fill="#0f0">50</text>
+          <text x="96" y="115" font-size="10" fill="#fff">|</text>
+          <text x="115" y="115" font-size="10" fill="#f00">50</text>
+          <text x="160" y="115" font-size="10" fill="#f00">SELL 0</text>
+        </svg>
+      `;
     }
 
     const url = "https://api.allorigins.win/raw?url=https://www.myfxbook.com/api/get-community-outlook.json?session=9UtvFTG9S31Z4vO1aDW31671626";
@@ -175,7 +191,7 @@
           return `
             <div class="box" onclick="showDetail('${pair.name}', ${pair.longPercentage}, ${pair.shortPercentage}, '${pair.volume || 'N/A'}')">
               <div class="pair">${pair.name}</div>
-              ${drawGauge(pair.longPercentage)}
+              ${drawDualGauge(pair.longPercentage, pair.shortPercentage)}
               <div class="value">Buy: ${pair.longPercentage}% | Sell: ${pair.shortPercentage}%</div>
               <div class="signal ${cls}">${signal}</div>
             </div>`;
