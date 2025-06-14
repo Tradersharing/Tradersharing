@@ -161,15 +161,47 @@
       document.getElementById('modal').style.display = 'none';
     }
 
-    // Load data dari proxy API myfxbook
     const url = "https://api.allorigins.win/raw?url=https://www.myfxbook.com/api/get-community-outlook.json?session=9UtvFTG9S31Z4vO1aDW31671626";
+
+    function drawDualGauge(buy, sell) {
+      const toAngle = (val, reverse = false) => {
+        const angle = (val / 100) * 90;
+        return reverse ? 90 - angle : -90 + angle;
+      };
+      const angleBuy = toAngle(buy);
+      const angleSell = toAngle(sell, true);
+      const bx = 100 + 60 * Math.cos(angleBuy * Math.PI / 180);
+      const by = 100 + 60 * Math.sin(angleBuy * Math.PI / 180);
+      const sx = 100 + 60 * Math.cos(angleSell * Math.PI / 180);
+      const sy = 100 + 60 * Math.sin(angleSell * Math.PI / 180);
+
+      return `
+        <svg viewBox="0 0 200 120">
+          <defs>
+            <filter id="vibrate">
+              <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="1" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1" />
+              <animate attributeName="scale" values="1;0.5;1" dur="0.5s" repeatCount="indefinite" />
+            </filter>
+          </defs>
+          <text x="100" y="12" font-size="12" fill="#FFD700" text-anchor="middle">100%</text>
+          <path d="M10,100 A90,90 0 0,1 100,10" stroke="#333" stroke-width="6" fill="none"/>
+          <path d="M100,10 A90,90 0 0,1 190,100" stroke="#333" stroke-width="6" fill="none"/>
+          <line x1="100" y1="100" x2="${bx}" y2="${by}" stroke="#0f0" stroke-width="3" filter="url(#vibrate)" />
+          <line x1="100" y1="100" x2="${sx}" y2="${sy}" stroke="#f00" stroke-width="3" filter="url(#vibrate)" />
+          <circle cx="100" cy="100" r="3" fill="#fff" />
+          <text x="20" y="112" font-size="10" fill="#0f0">0</text>
+          <text x="100" y="112" font-size="10" fill="#fff" text-anchor="middle">50</text>
+          <text x="180" y="112" font-size="10" fill="#f00" text-anchor="end">0</text>
+        </svg>
+      `;
+    }
 
     async function loadSignals() {
       try {
         const res = await fetch(url);
         const data = await res.json();
 
-        // Urutan prioritas
         const order = [
           "EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD",
           "EURGBP", "EURJPY", "EURCHF", "EURCAD", "EURAUD", "EURNZD",
@@ -180,7 +212,6 @@
           "XAUUSD", "US30", "BTCUSD"
         ];
 
-        // Urutkan data
         const sorted = [...data.symbols].sort((a, b) => {
           const ia = order.indexOf(a.name);
           const ib = order.indexOf(b.name);
@@ -190,19 +221,21 @@
           return ia - ib;
         });
 
-        document.getElementById("signals").innerHTML = sorted.map(pair => `
-          <div class="box">
-            <div class="pair">${pair.name}</div>
-            <div class="value">Buy: ${pair.longPercentage}% | Sell: ${pair.shortPercentage}%</div>
-            <div class="signal ${
-              pair.longPercentage >= 70 ? 'buy' : pair.shortPercentage >= 70 ? 'sell' : 'wait'
-            }">
-              ${
-                pair.longPercentage >= 70 ? 'BUY' : pair.shortPercentage >= 70 ? 'SELL' : 'WAIT'
-              }
+        document.getElementById("signals").innerHTML = sorted.map(pair => {
+          const buy = parseFloat(pair.longPercentage);
+          const sell = parseFloat(pair.shortPercentage);
+          const status = buy >= 70 ? 'BUY' : sell >= 70 ? 'SELL' : 'WAIT';
+          const cls = buy >= 70 ? 'buy' : sell >= 70 ? 'sell' : 'wait';
+
+          return `
+            <div class="box">
+              <div class="pair">${pair.name}</div>
+              ${drawDualGauge(buy, sell)}
+              <div class="value">Buy: ${buy}% | Sell: ${sell}%</div>
+              <div class="signal ${cls}">${status}</div>
             </div>
-          </div>
-        `).join("");
+          `;
+        }).join("");
       } catch (e) {
         document.getElementById("signals").innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
       }
