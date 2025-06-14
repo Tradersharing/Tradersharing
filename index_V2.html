@@ -88,23 +88,18 @@
       color: #FFD700;
     }
     .value {
-      margin-top: 10px;
+      margin-top: 5px;
       font-size: 13px;
+      color: #ccc;
     }
     .signal {
       margin-top: 8px;
       font-weight: bold;
       font-size: 14px;
     }
-    .buy {
-      color: #00ff00;
-    }
-    .sell {
-      color: #ff4444;
-    }
-    .wait {
-      color: #999;
-    }
+    .buy { color: #00ff00; }
+    .sell { color: #ff4444; }
+    .wait { color: #999; }
     svg {
       width: 100%;
       height: 100px;
@@ -161,15 +156,21 @@
     }
 
     function drawGauge(buy, sell) {
-      const angleBuy = (buy / 100) * 180 - 90;
-      const angleSell = (sell / 100) * 180 - 90;
+      const total = buy + sell;
+      const buyAngle = (buy / 100) * 180;
+      const sellAngle = (sell / 100) * 180;
+
       return `
         <svg viewBox="0 0 200 100">
-          <path d="M10,100 A90,90 0 0,1 190,100" stroke="#333" stroke-width="15" fill="none" />
-          <line x1="100" y1="100" x2="${100 + 80 * Math.cos(angleBuy * Math.PI / 180)}" y2="${100 + 80 * Math.sin(angleBuy * Math.PI / 180)}" stroke="#00FF00" stroke-width="4" />
-          <line x1="100" y1="100" x2="${100 + 60 * Math.cos(angleSell * Math.PI / 180)}" y2="${100 + 60 * Math.sin(angleSell * Math.PI / 180)}" stroke="#FF0000" stroke-width="3" />
-          <circle cx="100" cy="100" r="4" fill="#fff" />
-        </svg>`;
+          <path d="M10,100 A90,90 0 0,1 190,100" stroke="#333" stroke-width="10" fill="none" />
+          <line x1="100" y1="100" x2="${100 + 80 * Math.cos((buyAngle - 90) * Math.PI / 180)}" y2="${100 + 80 * Math.sin((buyAngle - 90) * Math.PI / 180)}" stroke="#0f0" stroke-width="4" />
+          <line x1="100" y1="100" x2="${100 + 60 * Math.cos((90 - sellAngle) * Math.PI / 180)}" y2="${100 + 60 * Math.sin((90 - sellAngle) * Math.PI / 180)}" stroke="#f00" stroke-width="3" />
+          <text x="50" y="95" font-size="10" fill="#0f0">Buy</text>
+          <text x="140" y="95" font-size="10" fill="#f00">Sell</text>
+          <text x="90" y="15" font-size="12" fill="#FFD700">100</text>
+          <circle cx="100" cy="100" r="3" fill="#fff" />
+        </svg>
+      `;
     }
 
     const url = "https://api.allorigins.win/raw?url=https://www.myfxbook.com/api/get-community-outlook.json?session=9UtvFTG9S31Z4vO1aDW31671626";
@@ -180,7 +181,7 @@
         const data = await res.json();
         const signals = document.getElementById("signals");
 
-        signals.innerHTML = data.symbols.map((pair, index) => {
+        signals.innerHTML = data.symbols.map((pair) => {
           let signal = 'WAIT';
           let cls = 'wait';
           if (pair.longPercentage >= 70) { signal = 'BUY'; cls = 'buy'; }
