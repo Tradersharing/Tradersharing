@@ -181,21 +181,23 @@
       signals.innerHTML = '<div class="box wait">🔄 Memuat data...</div>';
 
       try {
-        const res = await fetch(url);
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
         const data = await res.json();
         const sorted = data.symbols.sort((a, b) => Math.max(b.longPercentage, b.shortPercentage) - Math.max(a.longPercentage, a.shortPercentage));
 
         signals.innerHTML = sorted.map((pair) => {
+          const buy = parseFloat(pair.longPercentage) || 0;
+          const sell = parseFloat(pair.shortPercentage) || 0;
           let signal = 'WAIT';
           let cls = 'wait';
-          if (pair.longPercentage >= 70) { signal = 'BUY'; cls = 'buy'; }
-          else if (pair.shortPercentage >= 70) { signal = 'SELL'; cls = 'sell'; }
+          if (buy >= 70) { signal = 'BUY'; cls = 'buy'; }
+          else if (sell >= 70) { signal = 'SELL'; cls = 'sell'; }
 
           return `
-            <div class="box" onclick="showDetail('${pair.name}', ${pair.longPercentage}, ${pair.shortPercentage}, '${pair.volume || 'N/A'}')">
+            <div class="box" onclick="showDetail('${pair.name}', ${buy}, ${sell}, '${pair.volume || 'N/A'}')">
               <div class="pair">${pair.name}</div>
-              ${drawDualGauge(pair.longPercentage, pair.shortPercentage)}
-              <div class="value">Buy: ${pair.longPercentage}% | Sell: ${pair.shortPercentage}%</div>
+              ${drawDualGauge(buy, sell)}
+              <div class="value">Buy: ${buy}% | Sell: ${sell}%</div>
               <div class="signal ${cls}">${signal}</div>
             </div>`;
         }).join("");
