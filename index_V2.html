@@ -6,11 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="tradersharing_icon.png" type="image/png">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #000;
@@ -25,21 +21,10 @@
       align-items: center;
       justify-content: space-between;
     }
-    .title {
-      font-weight: bold;
-      font-size: 20px;
-    }
-    .title span.blue {
-      color: #00bfff;
-      text-shadow: 0 0 3px #000;
-    }
-    .title span.red {
-      color: #ff3030;
-    }
-    .subtitle {
-      font-size: 12px;
-      color: #aaa;
-    }
+    .title { font-weight: bold; font-size: 20px; }
+    .title span.blue { color: #00bfff; text-shadow: 0 0 3px #000; }
+    .title span.red { color: #ff3030; }
+    .subtitle { font-size: 12px; color: #aaa; }
     .burger {
       font-size: 24px;
       cursor: pointer;
@@ -56,9 +41,7 @@
       transition: left 0.3s ease;
       z-index: 10;
     }
-    .sidebar.active {
-      left: 0;
-    }
+    .sidebar.active { left: 0; }
     .sidebar a {
       display: block;
       color: #FFD700;
@@ -79,9 +62,7 @@
       text-align: center;
       transition: all 0.3s ease;
     }
-    .box:hover {
-      box-shadow: 0 0 20px #FFD700;
-    }
+    .box:hover { box-shadow: 0 0 20px #FFD700; }
     .pair {
       font-weight: bold;
       font-size: 16px;
@@ -100,10 +81,7 @@
     .buy { color: #00ff00; }
     .sell { color: #ff4444; }
     .wait { color: #999; }
-    svg {
-      width: 100%;
-      height: 100px;
-    }
+    svg { width: 100%; height: 100px; }
     #modal {
       display: none;
       position: fixed;
@@ -155,22 +133,29 @@
       document.getElementById('modal').style.display = 'none';
     }
 
-    function drawGauge(buy, sell) {
-      const total = buy + sell;
-      const buyAngle = (buy / 100) * 180;
-      const sellAngle = (sell / 100) * 180;
+    function drawGauge(buy) {
+      const angle = (buy / 100) * 180 - 90;
+      const rad = angle * Math.PI / 180;
+      const x = 100 + 60 * Math.cos(rad);
+      const y = 100 + 60 * Math.sin(rad);
 
       return `
-        <svg viewBox="0 0 200 100">
-          <path d="M10,100 A90,90 0 0,1 190,100" stroke="#333" stroke-width="10" fill="none" />
-          <line x1="100" y1="100" x2="${100 + 80 * Math.cos((buyAngle - 90) * Math.PI / 180)}" y2="${100 + 80 * Math.sin((buyAngle - 90) * Math.PI / 180)}" stroke="#0f0" stroke-width="4" />
-          <line x1="100" y1="100" x2="${100 + 60 * Math.cos((90 - sellAngle) * Math.PI / 180)}" y2="${100 + 60 * Math.sin((90 - sellAngle) * Math.PI / 180)}" stroke="#f00" stroke-width="3" />
-          <text x="50" y="95" font-size="10" fill="#0f0">Buy</text>
-          <text x="140" y="95" font-size="10" fill="#f00">Sell</text>
-          <text x="90" y="15" font-size="12" fill="#FFD700">100</text>
-          <circle cx="100" cy="100" r="3" fill="#fff" />
-        </svg>
-      `;
+        <svg viewBox="0 0 200 120">
+          <defs>
+            <filter id="vibrate">
+              <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="1" result="noise"/>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.5"/>
+              <animate attributeName="scale" values="0.5;1;0.5" dur="1s" repeatCount="indefinite" />
+            </filter>
+          </defs>
+          <path d="M10,100 A90,90 0 0,1 190,100" stroke="#444" stroke-width="8" fill="none"/>
+          <line x1="100" y1="100" x2="${x}" y2="${y}"
+            stroke="#FFD700" stroke-width="3" stroke-linecap="round" filter="url(#vibrate)" />
+          <circle cx="100" cy="100" r="4" fill="#fff" />
+          <text x="10" y="115" font-size="10" fill="#999">0</text>
+          <text x="95" y="115" font-size="10" fill="#ccc">50</text>
+          <text x="175" y="115" font-size="10" fill="#999">100</text>
+        </svg>`;
     }
 
     const url = "https://api.allorigins.win/raw?url=https://www.myfxbook.com/api/get-community-outlook.json?session=9UtvFTG9S31Z4vO1aDW31671626";
@@ -190,7 +175,7 @@
           return `
             <div class="box" onclick="showDetail('${pair.name}', ${pair.longPercentage}, ${pair.shortPercentage}, '${pair.volume || 'N/A'}')">
               <div class="pair">${pair.name}</div>
-              ${drawGauge(pair.longPercentage, pair.shortPercentage)}
+              ${drawGauge(pair.longPercentage)}
               <div class="value">Buy: ${pair.longPercentage}% | Sell: ${pair.shortPercentage}%</div>
               <div class="signal ${cls}">${signal}</div>
             </div>`;
