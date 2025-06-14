@@ -41,6 +41,7 @@
       font-size: 24px;
       cursor: pointer;
       z-index: 11;
+      user-select: none;
     }
     .sidebar {
       position: fixed;
@@ -151,5 +152,64 @@
     <div id="modal-content"></div>
     <div onclick="closeModal()" style="position:absolute; top:10px; right:20px; font-size: 28px; color: #fff; cursor:pointer">&times;</div>
   </div>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+
+    // Load data dari proxy API myfxbook
+    const url = "https://api.allorigins.win/raw?url=https://www.myfxbook.com/api/get-community-outlook.json?session=9UtvFTG9S31Z4vO1aDW31671626";
+
+    async function loadSignals() {
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        // Urutan prioritas
+        const order = [
+          "EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD",
+          "EURGBP", "EURJPY", "EURCHF", "EURCAD", "EURAUD", "EURNZD",
+          "GBPJPY", "GBPCHF", "GBPCAD", "GBPAUD", "GBPNZD",
+          "AUDJPY", "AUDCAD", "AUDNZD",
+          "CADJPY", "CADCHF",
+          "CHFJPY",
+          "XAUUSD", "US30", "BTCUSD"
+        ];
+
+        // Urutkan data
+        const sorted = [...data.symbols].sort((a, b) => {
+          const ia = order.indexOf(a.name);
+          const ib = order.indexOf(b.name);
+          if (ia === -1 && ib === -1) return a.name.localeCompare(b.name);
+          if (ia === -1) return 1;
+          if (ib === -1) return -1;
+          return ia - ib;
+        });
+
+        document.getElementById("signals").innerHTML = sorted.map(pair => `
+          <div class="box">
+            <div class="pair">${pair.name}</div>
+            <div class="value">Buy: ${pair.longPercentage}% | Sell: ${pair.shortPercentage}%</div>
+            <div class="signal ${
+              pair.longPercentage >= 70 ? 'buy' : pair.shortPercentage >= 70 ? 'sell' : 'wait'
+            }">
+              ${
+                pair.longPercentage >= 70 ? 'BUY' : pair.shortPercentage >= 70 ? 'SELL' : 'WAIT'
+              }
+            </div>
+          </div>
+        `).join("");
+      } catch (e) {
+        document.getElementById("signals").innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
+      }
+    }
+
+    loadSignals();
+    setInterval(loadSignals, 60000);
+  </script>
 </body>
 </html>
